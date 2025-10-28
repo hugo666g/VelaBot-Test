@@ -2,7 +2,7 @@ export default easyCMD({
   name: "report",
   description: "Reports a message to bot admins.",
   title: "📝 Report to Admin",
-  category: "Utilities",
+  category: "Support",
   contentFont: "fancy",
   icon: "📝",
   meta: {

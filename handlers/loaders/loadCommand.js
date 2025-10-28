@@ -310,6 +310,13 @@ export async function loadCommand(
       );
       return;
     }
+    if (meta.isGame && Cassidy.config.DISABLE_GAMES === true) {
+      global.logger(
+        `Skipped command ${meta.name}@${version} (Games disabled.)`,
+        fileName
+      );
+      return;
+    }
 
     await cassWatchJob({ commandData: command, fileName, version });
 

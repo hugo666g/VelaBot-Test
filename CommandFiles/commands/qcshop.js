@@ -15,6 +15,7 @@ export const meta = {
   requirement: "3.0.0",
   icon: "👒",
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 const qcShop = {

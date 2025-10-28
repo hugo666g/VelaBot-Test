@@ -19,6 +19,7 @@ export const meta = {
   requirement: "3.0.0",
   icon: "🔎",
   cmdType: "arl_g",
+  isGame: true,
 };
 
 /**

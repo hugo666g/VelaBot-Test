@@ -14,6 +14,7 @@ export const meta = {
   icon: "🤣",
   category: "Utilities",
   cmdType: "arl_g",
+  isGame: true,
 };
 
 export class style {

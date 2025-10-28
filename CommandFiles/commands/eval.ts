@@ -17,7 +17,7 @@ export const meta: CommandMeta = {
   requirement: "3.0.0",
   icon: "💻",
   waitingTime: 0.01,
-  category: "Utilities",
+  category: "Elevated",
   noLevelUI: true,
   noRibbonUI: true,
 };

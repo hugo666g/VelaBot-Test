@@ -23,6 +23,7 @@ export const meta: CommandMeta = {
   waitingTime: 1,
   requirement: "3.0.0",
   icon: "🪙",
+  isGame: true,
 };
 
 export const style: CommandStyle = {

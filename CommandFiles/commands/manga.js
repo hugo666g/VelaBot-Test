@@ -11,7 +11,7 @@ export const meta = {
   author: "MrkimstersDev",
   version: "1.0.0",
   usage: "{prefix}{name} <manga title>",
-  category: "Entertainment",
+  category: "Media",
   permissions: [0],
   noPrefix: false,
   waitingTime: 10,

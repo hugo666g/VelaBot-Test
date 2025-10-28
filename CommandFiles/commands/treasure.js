@@ -16,6 +16,7 @@ export const meta = {
   requirement: "1.0.0",
   icon: "🏴‍☠️",
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {
@@ -25,11 +26,46 @@ export const style = {
 };
 
 const treasures = [
-  { name: "Rusty Coin", priceA: 2, priceB: 5, delay: 1, icon: "🪙", chance: 0.3 },
-  { name: "Silver Chest", priceA: 10, priceB: 3, delay: 2, icon: "🎁", chance: 0.2 },
-  { name: "Pirate Gold", priceA: 50, priceB: 100, delay: 3, icon: "🏴‍☠️", chance: 0.15 },
-  { name: "Ancient Relic", priceA: 100, priceB: 300, delay: 20, icon: "⚱️", chance: 0.1 },
-  { name: "Cursed Treasure", priceA: 500, priceB: 1000, delay: 80, icon: "💀", chance: 0.05 },
+  {
+    name: "Rusty Coin",
+    priceA: 2,
+    priceB: 5,
+    delay: 1,
+    icon: "🪙",
+    chance: 0.3,
+  },
+  {
+    name: "Silver Chest",
+    priceA: 10,
+    priceB: 3,
+    delay: 2,
+    icon: "🎁",
+    chance: 0.2,
+  },
+  {
+    name: "Pirate Gold",
+    priceA: 50,
+    priceB: 100,
+    delay: 3,
+    icon: "🏴‍☠️",
+    chance: 0.15,
+  },
+  {
+    name: "Ancient Relic",
+    priceA: 100,
+    priceB: 300,
+    delay: 20,
+    icon: "⚱️",
+    chance: 0.1,
+  },
+  {
+    name: "Cursed Treasure",
+    priceA: 500,
+    priceB: 1000,
+    delay: 80,
+    icon: "💀",
+    chance: 0.05,
+  },
 ];
 
 const treasure = {

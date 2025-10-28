@@ -14,6 +14,7 @@ export const meta = {
   noPrefix: false,
   cmdType: "cplx_g",
   icon: "✨",
+  isGame: true,
 };
 
 /**

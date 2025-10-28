@@ -14,7 +14,7 @@ export const meta = {
   author: "Liane | JenicaDev",
   version: "1.1.3",
   usage: "{prefix}setname <newName>",
-  category: "User Management",
+  category: "User",
 
   permissions: [0],
   noPrefix: false,

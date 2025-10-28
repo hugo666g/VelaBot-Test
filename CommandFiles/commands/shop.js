@@ -22,6 +22,7 @@ export const meta = {
   icon: "🛒",
   requiredLevel: 3,
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

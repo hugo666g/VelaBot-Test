@@ -47,6 +47,7 @@ export const meta = {
   // botAdmin: true,
   cmdType: "arl_g",
   icon: "🏦",
+  isGame: true,
 };
 
 export const style = {

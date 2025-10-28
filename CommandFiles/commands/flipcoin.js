@@ -15,6 +15,7 @@ module.exports = {
     icon: "🪙",
     category: "Gambling Games",
     cmdType: "cplx_g",
+    isGame: true,
   },
   style: class {
     title = {

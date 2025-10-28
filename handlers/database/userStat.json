@@ -1,9 +1,9 @@
 {
   "web:bmVha3l1dGk": {
-    "money": 996758,
+    "money": 1010221,
     "exp": 0,
     "battlePoints": 410,
-    "lastModified": 1759317157239,
+    "lastModified": 1761646460397,
     "name": "Liane",
     "usernameHistory": [
       "Liane"
@@ -57,7 +57,7 @@
           "icon": "💎",
           "type": "currency"
         },
-        "amount": 44
+        "amount": 47
       },
       {
         "metadata": {
@@ -126,19 +126,14 @@
         "cannotToss": false
       },
       {
-        "key": "gsBlueberry",
-        "name": "Blueberry Seed",
-        "flavorText": "Tasty berries with multiple harvests.",
-        "icon": "🫐",
-        "type": "gardenSeed",
-        "sellPrice": 1,
-        "cropData": {
-          "baseValue": 18,
-          "growthTime": 2250000,
-          "harvests": 30,
-          "yields": 8
-        },
-        "uuid": "1755774990525_72964316-8d2f-41df-8c55-f67d4200698a",
+        "name": "Basic Pet Bundle ☆",
+        "icon": "🐾",
+        "flavorText": "A bundle of pets for sale! Use inv use to open.",
+        "sellPrice": 3100,
+        "type": "treasure",
+        "treasureKey": "randomGrouped_petsI",
+        "key": "petBundle",
+        "uuid": "1761646460386_dcfaee3f-5317-4755-9646-96d46c93f528",
         "index": 2,
         "cannotToss": false
       },
@@ -155,8 +150,25 @@
           "harvests": 30,
           "yields": 8
         },
-        "uuid": "1755775001345_cdacdca7-8c26-4148-82d1-c0fe223fb15b",
+        "uuid": "1755774990525_72964316-8d2f-41df-8c55-f67d4200698a",
         "index": 3,
+        "cannotToss": false
+      },
+      {
+        "key": "gsBlueberry",
+        "name": "Blueberry Seed",
+        "flavorText": "Tasty berries with multiple harvests.",
+        "icon": "🫐",
+        "type": "gardenSeed",
+        "sellPrice": 1,
+        "cropData": {
+          "baseValue": 18,
+          "growthTime": 2250000,
+          "harvests": 30,
+          "yields": 8
+        },
+        "uuid": "1755775001345_cdacdca7-8c26-4148-82d1-c0fe223fb15b",
+        "index": 4,
         "cannotToss": false
       },
       {
@@ -179,7 +191,7 @@
         "prob": 1,
         "isGift": true,
         "uuid": "1759026042401_462d4317-80db-4418-adfd-e95c8094bc14",
-        "index": 4,
+        "index": 5,
         "cannotToss": false
       },
       {
@@ -190,7 +202,7 @@
         "type": "food",
         "heal": 60,
         "uuid": "1755772041740_6d07081e-1a88-47b0-aeac-d534261d28a3",
-        "index": 5,
+        "index": 6,
         "sellPrice": 0,
         "cannotToss": false
       },
@@ -208,7 +220,7 @@
         "prob": 1,
         "isGift": true,
         "uuid": "1759317157213_f2f1cb88-715a-4484-81bc-4fee72188d94",
-        "index": 6,
+        "index": 7,
         "cannotToss": false
       },
       {
@@ -220,7 +232,19 @@
         "sellPrice": 7,
         "saturation": 90000,
         "uuid": "1755768560051_84e38e39-ef6f-4184-bb15-002fd61fc80b",
-        "index": 7,
+        "index": 8,
+        "cannotToss": false
+      },
+      {
+        "name": "Gift Pack",
+        "icon": "🎁🎴",
+        "flavorText": "This is a gift item, this item might grant you something. It's not guaranteed enough, you can use this using inventory command, if you know..",
+        "sellPrice": 100,
+        "type": "roulette_pack",
+        "treasureKey": "generic",
+        "key": "giftPack",
+        "uuid": "1761646460388_1df55f82-1cae-476e-b877-c4c841e19af0",
+        "index": 9,
         "cannotToss": false
       },
       {
@@ -236,7 +260,39 @@
           "banking"
         ],
         "uuid": "1759316908921_5256069a-50ae-4f63-a60c-ea53e57a0019",
-        "index": 8,
+        "index": 10,
+        "cannotToss": false
+      },
+      {
+        "name": "Lotto Ticket",
+        "key": "lottoTicket",
+        "flavorText": "A mysterious ticket purchased from the Meow Shop. Its purpose remains unclear, but it brims with potential.",
+        "icon": "🔖",
+        "type": "key",
+        "sellPrice": 5,
+        "prob": 0.35,
+        "group": [
+          "generic",
+          "banking"
+        ],
+        "uuid": "1761646460387_073d22a1-b195-41a3-a7ca-23dc907d8381",
+        "index": 11,
+        "cannotToss": false
+      },
+      {
+        "name": "Lotto Ticket",
+        "key": "lottoTicket",
+        "flavorText": "A mysterious ticket purchased from the Meow Shop. Its purpose remains unclear, but it brims with potential.",
+        "icon": "🔖",
+        "type": "key",
+        "sellPrice": 5,
+        "prob": 0.35,
+        "group": [
+          "generic",
+          "banking"
+        ],
+        "uuid": "1761646460387_1b8a57d6-a7ea-46be-8fac-721420e1dcde",
+        "index": 12,
         "cannotToss": false
       },
       {
@@ -249,7 +305,33 @@
         "sellPrice": 500,
         "healParty": true,
         "uuid": "1759316908921_b6c1e6d3-758d-498a-abf2-a0fcfd6563d0",
-        "index": 9,
+        "index": 13,
+        "cannotToss": false
+      },
+      {
+        "name": "Shadow Coin",
+        "key": "shadowCoin",
+        "flavorText": "A coin rumored to have been forged in the depths of a forgotten realm, carrying with it the clandestine power to transfer fortunes unseen.",
+        "icon": "🌒",
+        "type": "food",
+        "heal": 120,
+        "sellPrice": 500,
+        "healParty": true,
+        "uuid": "1761646460386_c60f879b-990b-4d9b-8521-edbb62b57252",
+        "index": 14,
+        "cannotToss": false
+      },
+      {
+        "name": "Shadow Coin",
+        "key": "shadowCoin",
+        "flavorText": "A coin rumored to have been forged in the depths of a forgotten realm, carrying with it the clandestine power to transfer fortunes unseen.",
+        "icon": "🌒",
+        "type": "food",
+        "heal": 120,
+        "sellPrice": 500,
+        "healParty": true,
+        "uuid": "1761646460387_e6fef604-3500-4695-835a-770359f309bc",
+        "index": 15,
         "cannotToss": false
       },
       {
@@ -272,7 +354,7 @@
         "prob": 1,
         "isGift": true,
         "uuid": "1759317145057_80e209d3-7b5e-4e72-a740-ff1beeaf0f05",
-        "index": 10,
+        "index": 16,
         "cannotToss": false
       },
       {
@@ -296,7 +378,7 @@
         "prob": 0.14,
         "isGift": true,
         "uuid": "1759317143983_6eb72f3a-7fcd-46ea-982a-42c029f46bfb",
-        "index": 11,
+        "index": 17,
         "cannotToss": false
       }
     ],
@@ -1013,6 +1095,6 @@
     },
     "lastGiftClaim": 1758983202158,
     "dailyStreak": 2,
-    "lastDailyClaim": 1759316919480
+    "lastDailyClaim": 1761646449551
   }
 }

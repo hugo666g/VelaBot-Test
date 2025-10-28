@@ -7,7 +7,7 @@ const gdcmd = defineCommand({
   meta: {
     name: "gd",
     otherNames: ["dash", "geometrydash", "gdbrowser"],
-    category: "Utilities",
+    category: "Media",
     description: "Anything related to GDBrowser.",
     version: "1.1.4",
     icon: "🛠️",

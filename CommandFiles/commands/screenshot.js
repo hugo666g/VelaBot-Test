@@ -8,7 +8,7 @@ export const meta = {
   author: "Liane Cagara | Haji Mix",
   version: "1.0.1",
   usage: "{prefix}{name}",
-  category: "Utilities",
+  category: "Media",
   permissions: [2],
   noPrefix: false,
   waitingTime: 0,

@@ -16,6 +16,7 @@ export const meta: CommandMeta = {
   otherNames: ["bonus", "daily"],
   requirement: "4.1.0",
   icon: "💎",
+  isGame: true,
 };
 
 export const style: CommandStyle = {

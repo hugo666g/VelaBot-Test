@@ -1,7 +1,6 @@
 import OutputProps, {
   OutputForm,
   OutputResultInf,
-  OutputResultNew,
   PromiseStandardReplyArg,
   StrictOutputForm,
 } from "output-cassidy";
@@ -22,6 +21,10 @@ export class OutputClass implements OutputProps {
    * @deprecated
    */
   Styled: OutputProps["Styled"];
+
+  get api() {
+    return this.#ctx.api;
+  }
 
   constructor(ctx: CommandContext) {
     this.#ctx = ctx;
@@ -276,7 +279,7 @@ export class OutputClass implements OutputProps {
    * @returns A promise resolving when the operation is complete.
    */
   add(user: string, thread: string = this.#ctx.event.threadID): Promise<void> {
-    return api.addUserToGroup(user, thread, (_err) => {});
+    return this.api.addUserToGroup(user, thread, (_err) => {});
   }
 
   /**
@@ -286,7 +289,7 @@ export class OutputClass implements OutputProps {
    * @returns A promise resolving when the operation is complete.
    */
   kick(user: string, thread: string = this.#ctx.event.threadID): Promise<void> {
-    return api.removeUserFromGroup(user, thread, (_err) => {});
+    return this.api.removeUserFromGroup(user, thread, (_err) => {});
   }
 
   /**
@@ -295,7 +298,7 @@ export class OutputClass implements OutputProps {
    * @returns A promise resolving when the operation is complete.
    */
   unsend(mid: string): Promise<void> {
-    return api.unsendMessage(mid, (_err) => {});
+    return this.api.unsendMessage(mid, (_err) => {});
   }
 
   /**
@@ -335,7 +338,12 @@ export class OutputClass implements OutputProps {
       }
       return this.#ctx.output.addReactionListener(this.LASTID, emojiOrListener);
     }
-    return api.setMessageReaction(emojiOrListener, mid, (_err) => {}, true);
+    return this.api.setMessageReaction(
+      emojiOrListener,
+      mid,
+      (_err) => {},
+      true
+    );
   }
 
   /**
@@ -490,7 +498,7 @@ export class OutputClass implements OutputProps {
       : stylerShallow.text(result);
     await utils.delay(delay);
     return new Promise((res) => {
-      const aa = api.editMessage(result, mid, () => res(true));
+      const aa = this.api.editMessage(result, mid, () => res(true));
       if (aa instanceof Promise) {
         // @ts-ignore
         aa.then(res);
@@ -564,7 +572,7 @@ export class OutputClass implements OutputProps {
     const append = this.#append;
     const prepend = this.#prepend;
     const { STYLE } = this;
-    const { input, api, event } = obj;
+    const { input, event } = obj;
     const styler = obj.input.isCommand ? obj.styler : obj.stylerDummy;
     const newMid = `web:mid-${Date.now()}`;
     if (typeof text === "object") {
@@ -705,7 +713,7 @@ export class OutputClass implements OutputProps {
           ...resultInfo,
           messageID: newMid,
           timestamp: Date.now(),
-          senderID: api.getCurrentUserID(),
+          senderID: this.api.getCurrentUserID(),
           threadID: options.threadID || event.threadID,
           attachment: url ?? null,
         });
@@ -732,7 +740,7 @@ export class OutputClass implements OutputProps {
       }
       return new Promise((res) => {
         if (options.contactID && input.isFacebook) {
-          api.shareContact(
+          this.api.shareContact(
             options.body,
             options.contactID,
             optionsCopy.threadID || event.threadID
@@ -744,13 +752,13 @@ export class OutputClass implements OutputProps {
               ...options,
               ...resultInfo,
               messageID: newMid,
-              senderID: api.getCurrentUserID(),
+              senderID: this.api.getCurrentUserID(),
               body: options.body,
             })
           );
           return;
         }
-        api.sendMessage(
+        this.api.sendMessage(
           // @ts-ignore
 
           options,
@@ -770,7 +778,7 @@ export class OutputClass implements OutputProps {
               ...options,
               ...info,
               ...resultInfo,
-              senderID: api.getCurrentUserID() || "",
+              senderID: this.api.getCurrentUserID() || "",
               body: options.body,
             });
             this.LASTID = resu.messageID;

@@ -18,6 +18,7 @@ export const meta = {
   otherNames: ["deepsea"],
   shopPrice: 1000000,
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

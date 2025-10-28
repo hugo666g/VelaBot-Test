@@ -17,6 +17,7 @@ export const meta = {
   otherNames: ["wizardf"],
   shopPrice: 1000000,
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

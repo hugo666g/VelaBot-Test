@@ -12,6 +12,7 @@ const config = {
   usage: "<song name>",
   cooldown: 5,
   icon: "🎵",
+  category: "Media",
 };
 
 const langData = {

@@ -14,6 +14,7 @@ export const meta = {
   shopPrice: 250,
   icon: "⛏️",
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

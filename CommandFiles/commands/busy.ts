@@ -10,7 +10,7 @@ export const meta: CommandMeta = {
   author: "@lianecagara",
   version: "1.0.0",
   usage: "{prefix}busy",
-  category: "Config",
+  category: "Thread",
   role: 0,
   botAdmin: false,
   waitingTime: 1,

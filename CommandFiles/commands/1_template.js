@@ -8,6 +8,7 @@ export default easyCMD({
   description: "Greets a user.",
   title: "💗 Greetings",
   icon: "💗",
+  category: "Fun",
   async run({ print, reaction, edit, atReply, userName, getMoney, setMoney }) {
     const money = await getMoney();
     const reward = 5;

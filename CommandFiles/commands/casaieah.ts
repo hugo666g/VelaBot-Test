@@ -16,6 +16,7 @@ export const meta: Cassieah.Meta = {
   requirement: "4.0.0",
   role: 0,
   waitingTime: 0,
+  isGame: true,
 };
 
 export const style: Cassieah.Style = {

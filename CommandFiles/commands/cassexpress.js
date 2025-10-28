@@ -16,6 +16,7 @@ export const meta = {
   icon: "💵",
   requiredLevel: 5,
   cmdType: "cplx_g",
+  isGame: true,
 };
 const charm = "✦";
 const circle = "⦿";

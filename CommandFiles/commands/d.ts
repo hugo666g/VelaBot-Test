@@ -4,13 +4,19 @@ export const meta: CommandMeta = {
   name: "autodl",
   description:
     "Autodownloader for Facebook videos. Automatically detects and downloads media from Facebook URLs. Upcoming support: Spotify, YouTube, YouTube Music, Twitter, and Instagram.",
-  version: "1.0.0",
-  author: "0xVoid",
+  version: "2.0.0",
+  author: "0xVoid, Kayelee",
   requirement: "2.5.0",
   icon: "📥",
   category: "Media",
   role: 1,
   noWeb: true,
+};
+
+export const style: CommandStyle = {
+  title: "📥 **Facebook Downloader**",
+  titleFont: "bold",
+  contentFont: "fancy",
 };
 
 function formatDuration(durationMs: number) {
@@ -71,12 +77,12 @@ export async function event({ output, input, threadsDB }: CommandContext) {
       if (data.hd || data.sd) {
         output.react("📥");
         await output.reply({
-          body: `${Title}\nDuration:${formatDuration(data.duration_ms)}`,
+          body: `**${Title}**\n⏱️ **${formatDuration(data.duration_ms)}**`,
           attachment: await global.utils.getStreamFromURL(data.hd || data.sd),
         });
-        output.react("✅");
+        output.reaction("✅");
       } else {
-        output.react("❌");
+        output.reaction("❌");
       }
     }
   } catch (err) {

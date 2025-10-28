@@ -13,6 +13,8 @@ export const meta = {
   requirement: "3.0.0",
   icon: "🎲",
   otherNames: ["ru"],
+  isGame: true,
+
   cmdType: "cplx_g",
 };
 

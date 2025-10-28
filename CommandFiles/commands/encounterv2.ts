@@ -34,6 +34,7 @@ export const meta: CommandMeta = {
   cmdType: "cplx_g",
   notes:
     "Reworked for improved modularity, scalability, and TypeScript support",
+  isGame: true,
 };
 
 export const style: CommandStyle = {

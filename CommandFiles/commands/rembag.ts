@@ -20,6 +20,7 @@ export const meta: CommandMeta = {
   icon: "🎒",
   requiredLevel: 5,
   cmdType: "arl_g",
+  isGame: true,
 };
 
 export const REMOTEBAG_INITIAL_SLOTS = 8;

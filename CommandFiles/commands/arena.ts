@@ -19,6 +19,7 @@ export const meta: CommandMeta = {
   requirement: "3.7.0",
   icon: "⚔️",
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style: CommandStyle = {

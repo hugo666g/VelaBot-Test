@@ -8,7 +8,7 @@ export const meta = {
   author: "Liane",
   version: "1.0.0",
   usage: "{prefix}{name}",
-  category: "User Management",
+  category: "User",
   permissions: [0],
   noPrefix: false,
   noWeb: true,

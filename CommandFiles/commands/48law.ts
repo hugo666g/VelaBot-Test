@@ -4,7 +4,7 @@ const command = defineCommand({
     description: "Git sam portiit law ofp pawer sir!",
     version: "1.0.0",
     usage: "{prefix}48law <number>",
-    category: "Knowledge",
+    category: "Media",
     author: "Aljur pogoy",
     role: 0,
     noPrefix: false,

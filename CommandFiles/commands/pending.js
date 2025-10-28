@@ -9,7 +9,7 @@ export const meta = {
   author: "MrkimstersDev | Liane Cagara",
   description: "Approve or cancel pending threads for the bot.",
   usage: "{prefix}pending",
-  category: "System",
+  category: "Elevated",
   permissions: [2],
   waitingTime: 5,
   noPrefix: false,

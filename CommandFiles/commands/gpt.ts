@@ -14,6 +14,7 @@ const cmd = easyCMD({
     version: "1.3.0",
     noPrefix: "both",
   },
+  category: "AI",
   title: {
     content: "GPT-4O FREE 🖼️🎓",
     text_font: "bold",

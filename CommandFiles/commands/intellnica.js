@@ -22,6 +22,7 @@ export const meta = {
   icon: "✨",
   shopPrice: 1_000_000,
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 function formatDuration(ms) {

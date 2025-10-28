@@ -8,7 +8,7 @@ export const meta: CommandMeta = {
   author: "MrkimstersDev, Fixed",
   version: "1.0.1",
   usage: "{prefix}{name} <anime title>",
-  category: "Entertainment",
+  category: "Media",
   role: 0,
   noPrefix: false,
   waitingTime: 10,

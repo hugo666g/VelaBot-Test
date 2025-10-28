@@ -15,7 +15,7 @@ export const meta: CommandMeta = {
   otherNames: ["nsxu", "nsx", "nscript"],
   waitingTime: 0.01,
   icon: ">_",
-  category: "Utilities",
+  category: "System",
   noLevelUI: true,
 };
 

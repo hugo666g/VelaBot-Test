@@ -28,6 +28,7 @@ export const meta = {
   requiredLevel: 10,
   requirement: "3.0.0",
   cmdType: "arl_g",
+  isGame: true,
 };
 
 const outcomes = [

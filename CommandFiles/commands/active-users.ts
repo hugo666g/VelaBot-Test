@@ -9,6 +9,7 @@ const command = defineCommand({
     version: "1.0.0",
     noPrefix: false,
     role: 0,
+    isGame: true,
     waitingTime: 3,
     requirement: "3.0.0",
     icon: "⚡",

@@ -8,7 +8,7 @@ export const meta: CommandMeta = {
   role: 0,
   requirement: "3.0.0",
   icon: "🎬",
-  category: "Entertainment",
+  category: "Media",
   otherNames: ["mov"],
 };
 

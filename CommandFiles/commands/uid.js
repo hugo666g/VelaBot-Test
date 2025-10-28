@@ -3,18 +3,18 @@
  * @type {CommandMeta}
  */
 export const meta = {
-  name: "gameid",
-  description: "Check game senderID",
-  author: "Liane",
+  name: "uid",
+  description: "Get your UserID",
+  author: "@lianecagara",
   version: "1.0.1",
   usage: "{prefix}{name}",
-  category: "Utilities",
+  category: "User",
   permissions: [0],
   noPrefix: "both",
   waitingTime: 10,
   requirement: "3.0.0",
-  otherNames: ["uid"],
-  icon: "🎮",
+  otherNames: ["gameid"],
+  icon: "👤",
   noLevelUI: true,
 };
 

@@ -3,13 +3,13 @@
  * @type {CommandMeta}
  */
 export const meta = {
-  name: "support",
+  name: "supportgc",
   author: "@lianecagara",
   version: "1.0.0",
   description: "Support Group Chat!",
   otherNames: ["supportgc", "gc"],
   usage: "{prefix}{name}",
-  category: "Social",
+  category: "Support",
   permissions: [0],
   waitingTime: 5,
   noPrefix: false,

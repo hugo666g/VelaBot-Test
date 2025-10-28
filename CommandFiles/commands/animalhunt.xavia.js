@@ -10,6 +10,7 @@ const config = {
   extra: {
     minbet: 400,
   },
+  isGame: true,
 };
 
 const langData = {

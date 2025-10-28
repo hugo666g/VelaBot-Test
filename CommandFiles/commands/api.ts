@@ -11,7 +11,7 @@ export const meta: CommandMeta = {
   author: "@lianecagara",
   version: "1.1.4",
   usage: "{prefix}inventory <action> [args]",
-  category: "Finance",
+  category: "System",
   role: 0,
   noPrefix: false,
   waitingTime: 1,

@@ -9,7 +9,7 @@ export const meta = {
   author: "Liane | JenicaDev",
   version: "1.1.1",
   usage: "{prefix}changename <newName>",
-  category: "User Management",
+  category: "User",
   role: 0,
   noPrefix: false,
   waitingTime: 5,

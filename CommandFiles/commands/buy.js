@@ -17,6 +17,7 @@ export const meta = {
   noPrefix: false,
   waitingTime: 0.01,
   icon: "🛒",
+  isGame: true,
 };
 
 /**

@@ -25,7 +25,7 @@ const command = defineCommand({
     author: "JV Barcenas | Liane Cagara",
     role: 1.5,
     description: "Accepts friend requests.",
-    category: "Utilities",
+    category: "Elevated",
     allowModerators: true,
     requirement: "3.0.0",
     noPrefix: false,

@@ -199,6 +199,9 @@ global.Cassidy = {
   replies: {},
   reacts: {},
   multiCommands: new MultiMap(),
+  get allowGames() {
+    return !Boolean(Cassidy.config.DISABLE_GAMES);
+  },
 };
 
 const login = require(global.Cassidy.config.FCA.path);

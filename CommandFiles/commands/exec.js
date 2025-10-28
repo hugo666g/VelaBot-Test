@@ -12,7 +12,7 @@ export const meta = {
   version: "1.0.3",
   description: "Execute shell commands",
   usage: "{prefix}{name} <command>",
-  category: "Utilities",
+  category: "Elevated",
   role: 2,
   waitingTime: 5,
   botAdmin: true,

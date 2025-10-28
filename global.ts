@@ -760,6 +760,7 @@ declare global {
     export interface CommandContext extends CommandContextOG {}
     export interface GlobalCassidy {
       clearModuleCache(...paths: string[]): boolean;
+      get allowGames(): boolean;
       /**
        * @deprecated
        */
@@ -903,6 +904,7 @@ declare global {
     export interface Command extends CassidyCommand {}
 
     export interface CommandMeta {
+      isGame?: boolean;
       name: string;
       fbOnly?: boolean;
       description: string;

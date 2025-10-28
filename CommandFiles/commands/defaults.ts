@@ -3,6 +3,7 @@ import { handleDefaultCommand } from "@cassidy/unispectra";
 export default easyCMD({
   name: "defaults",
   description: "Changes your default command.",
+  category: "System",
   extra: {
     style: { title: Cassidy.logo, contentFont: "fancy" },
   },

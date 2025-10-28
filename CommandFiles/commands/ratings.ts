@@ -7,7 +7,7 @@ export const meta: CommandMeta = {
   otherNames: ["rate", "review"],
   version: "1.0.1",
   usage: "{prefix}{name} <submit|update|list|view|home|delete> [args]",
-  category: "Utility",
+  category: "Support",
   author: "@lianecagara",
   role: 0,
   noPrefix: false,

@@ -2305,7 +2305,7 @@ export namespace BriefcaseAPI {
         });
       });
     } catch (error) {
-      return this.output.error(error);
+      this.output.error(error);
     }
   }
 

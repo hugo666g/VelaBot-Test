@@ -17,6 +17,7 @@ export const meta = {
   requirement: "2.0.0",
   icon: "🍳",
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

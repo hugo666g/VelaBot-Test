@@ -44,6 +44,7 @@ export const meta = {
   icon: "🎲",
   requiredLevel: 3,
   cmdType: "arl_g",
+  isGame: true,
 };
 
 const { randArrValue } = global.utils;

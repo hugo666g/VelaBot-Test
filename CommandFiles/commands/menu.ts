@@ -12,7 +12,7 @@ export const meta: CommandMeta = {
   author: "@lianecagara",
   description:
     "Acts as a central hub, like a Start Menu, providing users with an overview of available commands, their functionalities, and access to specific command details. Helps users quickly navigate the bot's features.",
-  version: "3.1.0",
+  version: "3.1.1",
   usage: "{prefix}{name} [commandName]",
   category: "System",
   role: 0,
@@ -71,7 +71,10 @@ export async function entry({
   );
   const shop = new ShopClass(shopInv);
 
-  if (String(args[0]).toLowerCase() === "all") {
+  if (
+    String(args[0]).toLowerCase() === "all" ||
+    (!args[0] && !Cassidy.allowGames)
+  ) {
     const categorizedCommands: Record<string, CassidySpectra.CassidyCommand[]> =
       commands.values().reduce((categories, command) => {
         const category = command.meta.category || "Miscellaneous";
@@ -129,7 +132,7 @@ export async function entry({
         if (!isAllowed) {
           continue;
         }
-        result += `${statusIcon} ${toTitleCase(name)}, `;
+        result += `${statusIcon} ${toTitleCase(name)},   `;
       }
       result += `\n${UNISpectra.standardLineOld}\n`;
     }

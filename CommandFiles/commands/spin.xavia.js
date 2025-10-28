@@ -10,6 +10,7 @@ const config = {
   cooldown: 10,
   credits: "Duke Agustin",
   category: "Xavia Economy",
+  isGame: true,
 };
 
 const langData = {

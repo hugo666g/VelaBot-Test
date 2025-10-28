@@ -16,6 +16,7 @@ export const meta = {
   otherNames: ["shawn"],
   icon: "🗡️",
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 const darkWorldShop = {

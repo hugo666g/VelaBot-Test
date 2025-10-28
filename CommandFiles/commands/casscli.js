@@ -19,7 +19,7 @@ export const meta = {
   otherNames: ["ccli", "cbox", "cassbox"],
   waitingTime: 0.01,
   icon: ">_",
-  category: "Utilities",
+  category: "System",
   noLevelUI: true,
 };
 

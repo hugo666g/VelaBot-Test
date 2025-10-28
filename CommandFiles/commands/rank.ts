@@ -5,7 +5,7 @@ export const meta: CommandMeta = {
   description: "Displays your in-game rank and experience.",
   version: "1.1.7",
   usage: "{prefix}{name}",
-  category: "Utilities",
+  category: "User",
   author: "JenicaDev",
   permissions: [0],
   noPrefix: false,

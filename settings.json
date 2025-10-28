@@ -1,4 +1,5 @@
 {
+  "DISABLE_GAMES": true,
   "NOTES_1": [
     "Please configure the PREFIX, ADMINBOT, also make sure the knownURL is set to your server url without trailing /",
     "You can do noFB: true, to disable facebook login.",

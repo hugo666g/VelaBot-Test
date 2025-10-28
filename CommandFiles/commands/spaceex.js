@@ -13,6 +13,7 @@ export const meta = {
   noPrefix: false,
   shopPrice: 500,
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

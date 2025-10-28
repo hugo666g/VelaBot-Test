@@ -28,6 +28,7 @@ export const meta = {
   icon: "🟨",
   category: "Chance Games",
   cmdType: "arl_g",
+  isGame: true,
 };
 
 // Created by Liane Cagara, do not own.

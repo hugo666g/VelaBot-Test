@@ -12,6 +12,7 @@ export default defineCommand({
     category: "Idle Investment Games",
     usage: "mines start | mines collect | mines buy <pickaxe>",
     icon: "⛏️",
+    isGame: true,
   },
   style: {
     preset: ["owners.json"],

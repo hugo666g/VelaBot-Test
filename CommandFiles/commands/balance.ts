@@ -17,6 +17,7 @@ export const meta: CommandMeta = {
   icon: "💰",
   cmdType: "cplx_g",
   noRibbonUI: true,
+  isGame: true,
 };
 
 export const style: CommandStyle = {

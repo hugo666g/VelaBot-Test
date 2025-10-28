@@ -2,7 +2,7 @@ export default defineCommand({
   meta: {
     name: "getlink",
     description: "Resolves FB Attachment URL",
-    category: "Utilities",
+    category: "Thread",
     version: "1.0.0",
     icon: "🔗",
   },

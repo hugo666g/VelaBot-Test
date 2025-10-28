@@ -24,6 +24,7 @@ export const meta = {
   category: "Chance Games",
   cmdType: "arl_g",
   icon: "💼",
+  isGame: true,
 };
 
 export const style = {

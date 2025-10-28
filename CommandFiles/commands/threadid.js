@@ -8,7 +8,7 @@ export const meta = {
   author: "Liane",
   version: "1.0.1",
   usage: "{prefix}{name}",
-  category: "Utilities",
+  category: "Thread",
   permissions: [0],
   noPrefix: "both",
   waitingTime: 10,

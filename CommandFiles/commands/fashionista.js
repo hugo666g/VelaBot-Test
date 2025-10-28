@@ -17,6 +17,7 @@ export const meta = {
   icon: "🛍️",
   waitingTime: 0.01,
   cmdType: "cplx_g",
+  isGame: true,
 };
 
 export const style = {

@@ -11,6 +11,7 @@ const command = defineCommand({
     category: "Gambling Games",
     usage: "appleshot <bet> | appleshot cooldown",
     icon: "🏹",
+    isGame: true,
   },
   style: {
     title: {

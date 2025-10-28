@@ -19,6 +19,7 @@ export const meta = {
   noLevelUI: true,
   noWeb: true,
   cmdType: "etc_xcmd",
+  isGame: true,
 };
 
 const url = process.env.AUTOCASS ?? "https://cassidybot.onrender.com";

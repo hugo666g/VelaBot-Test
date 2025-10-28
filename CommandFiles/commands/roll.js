@@ -18,6 +18,7 @@ export const meta = {
   otherNames: ["dice"],
   category: "Gambling Games",
   cmdType: "arl_g",
+  isGame: true,
 };
 
 export const style = {
