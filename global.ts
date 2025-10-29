@@ -25,6 +25,7 @@ declare global {
   };
   export import Datum = _Datum;
   var api: CommandContext["api"];
+  var wssAPI: WssAPI;
   export type TOnCallCommand = XaviaTypes.TOnCallCommand;
   export type TOnCallEvents = XaviaTypes.TOnCallEvents;
   export type TOnCallOnMessage = XaviaTypes.TOnCallOnMessage;
@@ -803,6 +804,7 @@ declare global {
         globalDB: UserStatsManager;
       };
       multiCommands: MultiMap<string, CassidyCommand>;
+      bgTasks: BackgroundTaskFB[];
     }
 
     export type Output = OutputX;
@@ -818,6 +820,7 @@ declare global {
       config?: CommandMeta;
       entry: CommandEntry;
       onCall?: CommandEntry;
+      bgTasks?: BackgroundTaskFB[];
       ID?: number;
       fileName?: string;
       treasuresTable?: Cass.InventoryItem[];
@@ -1188,6 +1191,8 @@ import { FontSystem } from "cassidy-styler";
 import { createThreads, createUsers } from "@cass-plugins/botpack-utils";
 import * as _CanvCass from "@cass-modules/CassieahExtras";
 import OutputClass from "@cass-modules/OutputClass";
+import { BackgroundTaskFB } from "@cass-modules/BackgroundTask";
+import { WssAPI } from "./webSystem";
 
 // import { defineOutputJSX, defineUserStatsJSX, VNode } from "@cass/define";
 declare global {

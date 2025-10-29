@@ -596,6 +596,7 @@ export function handleWebSocket(ws, funcListen) {
        */ socket
     ) => {
       const api = new WssAPI(socket);
+      globalThis.wssAPI = api;
 
       socket.on("message", (i) => {
         const data = JSON.parse(i.toString());

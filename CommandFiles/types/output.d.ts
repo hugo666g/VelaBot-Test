@@ -15,6 +15,7 @@ type OutputResultNew = import("@cass-plugins/output").OutputResult;
 
 export interface StrictOutputForm {
   body?: string;
+  useWebMode?: boolean;
   attachment?: Readable | Readable[] | any[] | any;
   threadID?: string;
   style?: Record<string, any>;

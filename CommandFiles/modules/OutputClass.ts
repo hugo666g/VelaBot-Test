@@ -55,7 +55,7 @@ export class OutputClass implements OutputProps {
     return this.#ctx.api;
   }
 
-  static createWithoutEvent(api: CommandContext["api"], style: CommandStyle) {
+  static createWithoutEvent(api: CommandContext["api"]) {
     const ctx: NoEventCMDContext = {
       api,
       commands: Cassidy.commands,
@@ -95,7 +95,7 @@ export class OutputClass implements OutputProps {
     ctx.ctx = ctx;
     ctx.allObj = ctx;
     ctx.input = new InputClass(ctx as CommandContext);
-    const styler = new CassidyResponseStylerControl(style ?? {});
+    const styler = new CassidyResponseStylerControl({});
     ctx.styler = styler;
     ctx.stylerDummy = styler;
     const output = new OutputClass(ctx);
@@ -106,6 +106,10 @@ export class OutputClass implements OutputProps {
     _ctx: CommandContext | NoEventCMDContext
   ): _ctx is CommandContext {
     return !this.NO_EVENT_MODE;
+  }
+
+  getNoEventContext(): NoEventCMDContext {
+    return !this.canWorkWithEvent(this.#ctx) ? this.#ctx : null;
   }
 
   constructor(ctx: CommandContext | NoEventCMDContext) {
@@ -286,6 +290,13 @@ export class OutputClass implements OutputProps {
    */
   setStyle(style: CassidySpectra.CommandStyle): void {
     this.STYLE = style;
+  }
+
+  /**
+   * Clears the current recognized style in a single output instance. Only same events were affected.
+   */
+  clearStyle(): void {
+    this.STYLE = null;
   }
 
   /**
@@ -827,6 +838,7 @@ export class OutputClass implements OutputProps {
           r(toR);
         });
       }
+      const api = options.useWebMode ? wssAPI : this.api;
       return new Promise((res) => {
         if (options.contactID && input.isFacebook) {
           this.api.shareContact(
@@ -847,7 +859,7 @@ export class OutputClass implements OutputProps {
           );
           return;
         }
-        this.api.sendMessage(
+        api.sendMessage(
           // @ts-ignore
 
           options,
@@ -867,7 +879,7 @@ export class OutputClass implements OutputProps {
               ...options,
               ...info,
               ...resultInfo,
-              senderID: this.api.getCurrentUserID() || "",
+              senderID: api.getCurrentUserID() || "",
               body: options.body,
             });
             this.LASTID = resu.messageID;

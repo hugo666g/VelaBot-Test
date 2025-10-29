@@ -202,6 +202,7 @@ global.Cassidy = {
   get allowGames() {
     return !Boolean(Cassidy.config.DISABLE_GAMES);
   },
+  bgTasks: [],
 };
 
 const login = require(global.Cassidy.config.FCA.path);
@@ -503,6 +504,8 @@ async function main() {
     setupRestart();
     setupAutoRestart();
     await setupCommands();
+    BackgroundTaskFB.loadTasksFromCommands();
+    await BackgroundTaskFB.startPoll(api);
   } catch (error) {
     console.error(error);
   }
@@ -613,6 +616,7 @@ import getCUser from "@cass-modules/XaviaSupport/User";
 import { CanvCass } from "@cass-modules/CassieahExtras";
 import { formatTimeSentence } from "@cass-modules/ArielUtils";
 import path from "path";
+import { BackgroundTaskFB } from "@cass-modules/BackgroundTask";
 const { UTYPlayer } = global.utils;
 
 const limit = {
