@@ -60,6 +60,20 @@ const home = new ReduxCMDHome(
       },
     },
     {
+      key: "refresh",
+      description: "Refresh your user data.",
+      aliases: ["ref"],
+      args: ["[uid]"],
+      async handler({ output, usersDB, uid, args }, {}) {
+        const id = args[0] || uid;
+        const d = await usersDB.getItem(id);
+        output.reply(
+          `👥 **${d.name}** (Refresh)\n\n` +
+            `✅ Their data cache has been **refreshed!**`
+        );
+      },
+    },
+    {
       key: "find",
       description: "Search for users by name.",
       aliases: ["-s", "search"],

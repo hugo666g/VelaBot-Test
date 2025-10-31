@@ -141,5 +141,7 @@ dist
 .pnp.*
 
 transfer.js
+transfer2.js
 transferold.js
 clear.js
+req.json

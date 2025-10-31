@@ -121,7 +121,7 @@ export async function use(obj) {
     } catch (err) {
       console.log(err);
     }
-    const { reply } = output;
+    const reply = output.reply.bind(output);
     let eventTypes = ["message", "message_reply"];
     global.currData = supposedCommand;
 

@@ -6,15 +6,12 @@ export const meta = {
   name: "userInfo",
   description: "Check user's info",
   author: "Liane",
-  version: "1.0.0",
+  version: "2.0.0",
   usage: "{prefix}{name}",
   category: "User",
-  permissions: [0],
-  noPrefix: false,
-  noWeb: true,
   requirement: "3.0.0",
   icon: "📛",
-  fbOnly: true,
+  aliases: ["uinfo"],
 };
 
 /**
@@ -22,22 +19,20 @@ export const meta = {
  * @param {CommandContext} param0
  * @returns
  */
-export async function entry({ input, output, money, args }) {
-  const { fonts } = global.utils;
-  let ID = input.detectID || input.senderID;
+export async function entry({ input, output, usersDB, args }) {
+  let ID = args[0] || input.detectID || input.senderID;
   if (args[0] === "raw") {
     return output.reply(`${ID}`);
   }
   if (args[0] === "tid") {
     return output.reply(`${input.threadID}`);
   }
-  await money.ensureUserInfo(ID);
-  const { userMeta: info } = await money.getItem(ID);
-  if (!info) {
-    return output.wentWrong();
-  }
-  await output.reply(`📛 ${fonts.bold(`${info.name}`)}
+  const udata = await usersDB.getItem(ID);
+  const info = await usersDB.getUserInfo(ID);
+  await output.reply(`📛 **${udata.name}**${info ? ` (${info.name})` : ""}
 
-𝙄𝘿: ${ID}
-𝙏𝙄𝘿: ${input.threadID}`);
+**ID**: ${ID}
+**TID**: ${
+    input.threadID
+  }\n\n**FB Link**:\nhttps://facebook.com/profile.php?id=${ID}`);
 }
