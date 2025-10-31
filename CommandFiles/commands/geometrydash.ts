@@ -1,8 +1,113 @@
+import { BackgroundTaskFB } from "@cass-modules/BackgroundTask";
 import { GDBrowserAPI } from "@cass-modules/GDBrowserAPI";
 import { fetchThumbnail, Quality } from "@cass-modules/GDLevelThumbnail";
 import { SpectralCMDHome } from "@cassidy/spectral-home";
 import { abbreviateNumber, UNISpectra } from "@cassidy/unispectra";
-import { loadImage } from "@napi-rs/canvas";
+import { Datum } from "cassidy-styler";
+
+interface LevelTrackerCache {
+  likes?: number;
+  recognizedComments?: string[];
+  name?: string;
+  author?: string;
+  downloads?: number;
+}
+
+const levelTracker = new BackgroundTaskFB<Map<string, LevelTrackerCache>>({
+  taskID: "GD_Level_Tracker",
+  intervalMS: 30 * 1000,
+  onStart(task) {
+    task.state = new Map<string, LevelTrackerCache>();
+  },
+  async onTask({ output, threadsDB }, task) {
+    const allThreads = await threadsDB.getAllCache();
+
+    for (const [threadID, threadData] of Object.entries(allThreads)) {
+      const trackedLevels = (threadData.gdLevelTracks ?? []) as string[];
+      for (const levelID of trackedLevels) {
+        try {
+          const level = await GDBrowserAPI.level(levelID);
+          const cache = task.state.get(levelID);
+
+          const likeEmoji = (level.likes || 0) >= 0 ? "👍" : "👎";
+          const likeDelta = cache ? level.likes! - cache.likes! : 0;
+          const likeDeltaStr =
+            likeDelta === 0 ? "" : ` (${likeDelta > 0 ? "+" : ""}${likeDelta})`;
+
+          const downloadDelta =
+            cache && cache.downloads !== undefined
+              ? level.downloads! - cache.downloads
+              : 0;
+          const downloadDeltaStr =
+            downloadDelta === 0
+              ? ""
+              : ` (${downloadDelta > 0 ? "+" : ""}${downloadDelta})`;
+
+          const comments = await GDBrowserAPI.comments(level.id, { page: 0 });
+          const recognized = cache?.recognizedComments ?? [];
+          const newComments = comments.filter(
+            (c) => !recognized.includes(c.ID)
+          );
+          const newCommentsList = newComments
+            .slice(0, 8)
+            .map(
+              (c) =>
+                `👤 **${c.username}**${
+                  c.percent ? `  %${c.percent}` : ""
+                } ${"🪙".repeat(c.coins || 0)}\n${
+                  c.content
+                }\n(${c.date.toFonted("fancy_italic")})`
+            );
+
+          const notify =
+            cache !== undefined && (likeDelta !== 0 || newComments.length > 0);
+
+          let message = `**${level.name}** (#${level.id})\n${
+            UNISpectra.arrow
+          } By **${level.author}**\n📥 ${abbreviateNumber(
+            level.downloads || 0
+          )}${downloadDeltaStr}\n${likeEmoji} ${abbreviateNumber(
+            level.likes || 0
+          )}${likeDeltaStr}`;
+
+          let headers: string[] = [];
+          if (likeDelta !== 0) headers.push("New Likes!");
+          if (newCommentsList.length) headers.push(`New Comments!`);
+
+          if (headers.length) {
+            message = `🔔 **${headers.join(" & ")}**\n\n${message}`;
+            if (newCommentsList.length) {
+              message += `\n\n💬 New Comments:\n${
+                UNISpectra.standardLine
+              }\n${newCommentsList.join(`\n${UNISpectra.standardLine}\n`)}`;
+            }
+          }
+
+          task.state.set(levelID, {
+            likes: level.likes,
+            downloads: level.downloads,
+            recognizedComments: comments.slice(0, 8).map((c) => c.ID),
+            name: level.name,
+            author: level.author,
+          });
+
+          if (notify) {
+            output.sendStyled(
+              { useWebMode: true, body: message },
+              gdcmd.style,
+              "wss"
+            );
+            output.sendStyled(message, gdcmd.style, threadID);
+          }
+
+          await utils.delay(5000);
+        } catch (err) {
+          console.error(`Failed to fetch level ${levelID}:`, err);
+        }
+      }
+    }
+  },
+});
 
 const gdcmd = defineCommand({
   meta: {
@@ -10,7 +115,7 @@ const gdcmd = defineCommand({
     otherNames: ["dash", "geometrydash", "gdbrowser"],
     category: "Media",
     description: "Anything related to GDBrowser.",
-    version: "1.1.4",
+    version: "1.1.5",
     icon: "🛠️",
     author: "@lianecagara",
   },
@@ -22,6 +127,7 @@ const gdcmd = defineCommand({
   async entry(ctx) {
     return gdoptions.runInContext(ctx);
   },
+  bgTasks: [levelTracker],
 });
 const gdoptions = new SpectralCMDHome({ isHypen: false }, [
   {
@@ -248,6 +354,89 @@ const gdoptions = new SpectralCMDHome({ isHypen: false }, [
       } catch (error) {
         return output.reply("No Results.");
       }
+    },
+  },
+  {
+    key: "track",
+    description: "Provide a level ID(s) to track (enable notifications).",
+    args: ["<...level_ids>"],
+    async handler({ threadsDB, output, input }, { spectralArgs }) {
+      const ids = [...spectralArgs].filter(Boolean);
+      if (ids.length === 0) {
+        return output.reply(
+          `❌ You must provide **at least one level ID as an argument** to track. Notifications will be sent when changes occur.`
+        );
+      }
+      const thread = await threadsDB.getItem(input.threadID);
+      let gdLevelTracks: string[] = thread.gdLevelTracks ?? [];
+      gdLevelTracks.push(...ids);
+      gdLevelTracks = Datum.toUniqueArray(gdLevelTracks);
+
+      await threadsDB.setItem(input.threadID, {
+        gdLevelTracks,
+      });
+      return output.reply(
+        `✅ Tracking enabled for the following level(s) in this thread:\n${gdLevelTracks.join(
+          ", "
+        )}\n\nYou will now receive notifications in this thread whenever these levels change.`
+      );
+    },
+  },
+  {
+    key: "untrack",
+    description: "Remove one or more level IDs from tracking in this thread.",
+    args: ["<...level_ids>"],
+    async handler({ threadsDB, output, input }, { spectralArgs }) {
+      const ids = [...spectralArgs].filter(Boolean);
+      if (ids.length === 0) {
+        return output.reply(
+          `❌ You must provide **at least one level ID as an argument** to untrack. Notifications will no longer be sent for removed levels.`
+        );
+      }
+
+      const thread = await threadsDB.getItem(input.threadID);
+      let gdLevelTracks: string[] = thread.gdLevelTracks ?? [];
+
+      const removed = ids.filter((id) => gdLevelTracks.includes(id));
+      gdLevelTracks = gdLevelTracks.filter((id) => !removed.includes(id));
+
+      gdLevelTracks = Datum.toUniqueArray(gdLevelTracks);
+
+      await threadsDB.setItem(input.threadID, { gdLevelTracks });
+
+      if (removed.length === 0) {
+        return output.reply(
+          `⚠️ None of the provided level ID(s) were being tracked in this thread.`
+        );
+      }
+
+      return output.reply(
+        `✅ Stopped tracking the following level(s) in this thread:\n${removed.join(
+          ", "
+        )}\n\nYou will no longer receive notifications for these levels.`
+      );
+    },
+  },
+  {
+    key: "tracked",
+    description: "List all level IDs currently being tracked in this thread.",
+    async handler({ threadsDB, output, input }) {
+      const thread = await threadsDB.getItem(input.threadID);
+      let gdLevelTracks: string[] = thread.gdLevelTracks ?? [];
+
+      gdLevelTracks = Datum.toUniqueArray(gdLevelTracks);
+
+      if (gdLevelTracks.length === 0) {
+        return output.reply(
+          `ℹ️ No levels are currently being tracked in this thread.`
+        );
+      }
+
+      return output.reply(
+        `📋 Currently **tracked level(s)** in this thread:\n${gdLevelTracks.join(
+          "\n"
+        )}\n\nNotifications will be sent here **whenever these levels change.**`
+      );
     },
   },
 ]);
