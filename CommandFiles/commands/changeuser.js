@@ -10,7 +10,7 @@ export const meta = {
   version: "1.1.1",
   usage: "{prefix}changename <newName>",
   category: "User",
-  role: 0,
+  role: 2,
   noPrefix: false,
   waitingTime: 5,
   icon: "👤",
