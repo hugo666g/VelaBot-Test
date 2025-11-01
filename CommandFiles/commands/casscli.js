@@ -12,7 +12,7 @@ export const meta = {
   usage:
     "Use CassCLI to interact with the bot using simple text-based commands. Example usage: `casscli > help`, `casscli > status`, `casscli > list commands`.",
   version: "1.0.0",
-  role: 0,
+  role: 2,
   botAdmin: false,
   noPrefix: false,
   requirement: "3.0.0",
