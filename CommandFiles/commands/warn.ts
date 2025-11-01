@@ -24,7 +24,7 @@ export const meta: CommandMeta = {
   usage: "{prefix}{name} [add|view|clear] [user] [reason]",
   category: "Moderation",
   author: "MrkimstersDev, Liane",
-  role: 1,
+  role: 2,
   noPrefix: false,
   waitingTime: 0,
   requirement: "3.0.0",
