@@ -11,7 +11,7 @@ export const meta: CommandMeta = {
   name: "menu",
   author: "@lianecagara",
   description:
-    "Działa jako centralne centrum — jak menu Start — zapewnia użytkownikom przegląd dostępnych komend, ich funkcji oraz dostęp do szczegółów każdej z nich. Pomaga szybko odnaleźć funkcje bota.",
+    "Działa jako centralny hub, podobnie do Menu Start, pokazując użytkownikom dostępne komendy, ich funkcje i szczegóły. Ułatwia szybkie poruszanie się po funkcjach bota.",
   version: "3.1.1",
   usage: "{prefix}{name} [nazwaKomendy]",
   category: "System",
@@ -28,27 +28,26 @@ export const style: CommandStyle = {
   contentFont: "none",
 };
 
-// 🧭 Podstawowe komendy
 const basicCommands = {
   register: "Zmień swoją nazwę użytkownika.",
-  items: "Wyświetl i użyj przedmiotów z ekwipunku.",
-  gift: "Odbierz swój darmowy prezent/nagrodę co godzinę.",
-  bal: "Sprawdź swoje pieniądze, kolekcje, punkty bitewne i rangi.",
-  bank: "Przechowuj inne przedmioty i pieniądze w banku.",
-  active: "Zobacz aktywnych użytkowników.",
-  streak: "Odbierz swój codzienny bonus/serię.",
-  vault: "Dodatkowy magazyn na przedmioty.",
-  bag: "Jeszcze jeden magazyn na przedmioty.",
-  rank: "Zobacz swoje doświadczenie (EXP).",
-  ratings: "Przeglądaj i dodawaj opinie oraz recenzje.",
-  report: "Zgłoś coś administratorowi.",
-  trade: "Kupuj i sprzedawaj przedmioty.",
-  uid: "Zobacz swój unikalny identyfikator użytkownika (UID).",
-  pet: "Kupuj, karm i zarabiaj na swoich zwierzakach!",
-  rosashop: "Kupuj przedmioty związane ze zwierzakami.",
-  garden: "Zasadź i rozwijaj swój ogród!",
-  arena: "Turniej AI lub PvP zwierzaków, w którym możesz zarabiać!",
-  mtls: "Twórz, kupuj i przekształcaj swoje pieniądze w tokeny (nie giełda!).",
+  items: "Wyświetl i używaj **przedmiotów** z ekwipunku.",
+  gift: "Odbierz swój godzinny darmowy prezent/nagrody.",
+  bal: "Sprawdź swoje wirtualne **pieniądze**, kolekcje, punkty bitew i rangę.",
+  bank: "Przechowuj inne **przedmioty** i **pieniądze** w oddzielnym banku.",
+  active: "Zobacz **aktywnych** użytkowników.",
+  streak: "Odbierz swój **dzienny** bonus/serię.",
+  vault: "Dodatkowe **miejsce** na przedmioty.",
+  bag: "Kolejne dodatkowe **miejsce** na przedmioty.",
+  rank: "Sprawdź swój **EXP**.",
+  ratings: "Wyświetl i napisz **oceny i recenzje**",
+  report: "Zgłoś **coś** administratorowi.",
+  trade: "**Kup i sprzedawaj** przedmioty.",
+  uid: "Zobacz swój UNIKALNY ID użytkownika.",
+  pet: "Kup, karm i **zarabiaj** na swoich zwierzakach!",
+  rosashop: "Kup coś związanego ze **zwierzakami**.",
+  garden: "Uprawiaj **ogród** tutaj!",
+  arena: "Turniej AI lub PvP dla zwierzaków, gdzie możesz **zarobić**!",
+  mtls: "Twórz, kupuj, konwertuj swoje **pieniądze** na **mint** (To nie jest system akcji).",
 };
 
 export async function entry({
@@ -62,7 +61,6 @@ export async function entry({
   InputRoles,
 }: CommandContext) {
   const commands = multiCommands.toUnique((i) => i.meta?.name);
-
   const args = input.arguments;
   const { logo: icon } = global.Cassidy;
   const { shopInv, money: userMoney } = await money.queryItem(
@@ -72,9 +70,7 @@ export async function entry({
   );
   const shop = new ShopClass(shopInv);
 
-  // ————————————————————————————————————————————————
-  // 🔹 Wyświetlanie WSZYSTKICH komend lub jeśli gry są wyłączone
-  // ————————————————————————————————————————————————
+  // Wszystkie komendy w wersji "all"
   if (
     String(args[0]).toLowerCase() === "all" ||
     (!args[0] && !Cassidy.allowGames)
@@ -100,14 +96,9 @@ export async function entry({
     const sortedCategories = Object.keys(categorizedCommands).sort((a, b) => {
       const aCommands = categorizedCommands[a];
       const bCommands = categorizedCommands[b];
-
       const aPrio = getSumPrioIndex(aCommands);
       const bPrio = getSumPrioIndex(bCommands);
-
-      if (aPrio !== bPrio) {
-        return aPrio - bPrio;
-      }
-
+      if (aPrio !== bPrio) return aPrio - bPrio;
       return a.localeCompare(b);
     });
 
@@ -131,102 +122,131 @@ export async function entry({
             ? "🔐"
             : "🔒";
 
-        let isAllowed =
-          (!shopPrice || shop.isUnlocked(name)) && input.hasRole(role);
         result += `${statusIcon} ${toTitleCase(name)},   `;
       }
       result += `\n${UNISpectra.standardLineOld}\n`;
     }
     result = result.trim();
-
-    result += `\n${UNISpectra.arrow} Szczegóły komendy: **${prefix}${commandName} <nazwa>**\n`;
-
-    const resultStr = `🔍 | **Dostępne komendy** 🧰 (${commands.size})\n\n${result}${UNISpectra.charm} Stworzone przez @**hugo** 🎀`;
+    result += `\n${UNISpectra.arrow} Szczegóły komendy: **${prefix}${commandName} <komenda>**\n`;
+    const resultStr = `🔍 | **Dostępne Komendy** 🧰 (${commands.size})\n\n${result}${UNISpectra.charm} Stworzone przez @**Liane Cagara** 🎀`;
     return output.reply(resultStr);
-}
+  }
 
-  // ————————————————————————————————————————————————
-  // 🔎 Wyszukiwanie komendy
-  // ————————————————————————————————————————————————
-  if (args[0]) {
-    const searchQuery = args.join(" ").toLowerCase();
-    const foundCommand = commands.find(
-      (command) =>
-        command.meta.name.toLowerCase() === searchQuery ||
-        command.meta.otherNames?.includes(searchQuery)
-    );
-
-    if (foundCommand) {
-      const { name, description, usage, category, author, icon, role } =
-        foundCommand.meta;
-
-      const roleLabel =
-        role === InputRoles.ADMINBOT
-          ? "👑 Administrator Bota"
-          : role === InputRoles.MODERATORBOT
-          ? "🛡️ Moderator"
-          : role === InputRoles.ADMINBOX
-          ? "📦 Administrator Czatów"
-          : "👤 Użytkownik";
-
-      const usageStr = usage
-        ? `📘 **Użycie:** ${usage.replace("{prefix}", prefix)}`
-        : "";
-      const descriptionStr = description
-        ? `💬 **Opis:** ${description}`
-        : "Brak opisu dla tej komendy.";
-
-      const cmdInfo = [
-        `${icon || "🧩"} **${toTitleCase(name)}**`,
-        descriptionStr,
-        usageStr,
-        `📂 **Kategoria:** ${category || "Różne"}`,
-        `👨‍💻 **Autor:** ${author || "Nieznany"}`,
-        `🔐 **Uprawnienia:** ${roleLabel}`,
-      ]
-        .filter(Boolean)
-        .join("\n");
-
-      return output.reply(`✨ | **Szczegóły komendy**\n\n${cmdInfo}`);
+  // Wyszukiwanie komend
+  else if (
+    String(args[0]).toLowerCase() === "search" ||
+    String(args[0]).toLowerCase() === "find"
+  ) {
+    const searchStr = String(args[1] || "");
+    if (!searchStr) {
+      return output.reply(
+        `🔎 Wyszukaj **komendę** podając słowo kluczowe jako argument.\n\n**PRZYKŁAD**: ${prefix}${commandName} search shop`
+      );
     }
-
-    // ❌ Brak dopasowania → podpowiedź
-    const allCommandNames = commands.map((c) => c.meta.name);
-    const matches = stringSimilarity.findBestMatch(searchQuery, allCommandNames);
-    const best = matches.bestMatch?.target;
-
+    const getSortedFinds = <T>(
+      search: string,
+      candidates: { tokens: string[]; data: T }[]
+    ) => {
+      const results = candidates
+        .map((candidate) => {
+          const scores = candidate.tokens.map((t) =>
+            stringSimilarity.compareTwoStrings(search.toLowerCase(), t)
+          );
+          const scoreSum = scores.reduce((acc, score) => score + acc, 0);
+          return { candidate, score: scoreSum, data: candidate.data };
+        })
+        .sort((a, b) => b.score - a.score)
+        .slice(0, 5);
+      return results;
+    };
+    const cmds = commands.values().map((command) => {
+      const meta = command.meta;
+      meta.seo ??= [];
+      meta.otherNames ??= [];
+      meta.description ??= "";
+      meta.usage ??= "";
+      meta.category ??= "";
+      const combined = `${meta.category} ${meta.name} ${meta.otherNames.join(
+        " "
+      )} ${meta.description} ${meta.usage} ${meta.seo.join(" ")}`;
+      const split = combined.split(/\s+/);
+      return { ...command, meta, split };
+    });
+    const results = getSortedFinds(
+      searchStr,
+      cmds.map((i) => ({ tokens: i.split, data: i }))
+    );
     return output.reply(
-      `❌ Nie znaleziono komendy o nazwie **${searchQuery}**.\n\nCzy chodziło Ci o: **${best}**?`
+      `🔎 **Wyniki Wyszukiwania** (${results.length})\n${UNISpectra.standardLine}\n${
+        results.length === 0
+          ? `❓ Brak wyników.`
+          : results
+              .map((i) => ({ ...i.data.meta, i }))
+              .map(
+                (i) =>
+                  `${i.icon ?? "📁"} ${prefix}**${i.name}**${
+                    i.otherNames.length > 0
+                      ? `\nAlias: **${i.otherNames.join(", ")}**`
+                      : ""
+                  }\n${UNISpectra.arrowFromT} ${
+                    i.description ?? "Brak opisu"
+                  }`
+              )
+              .join(`\n${UNISpectra.standardLine}\n`)
+      }`
     );
   }
 
-  // ————————————————————————————————————————————————
-  // 📄 Stronicowanie lub domyślny widok
-  // ————————————————————————————————————————————————
-  const perPage = 10;
-  const pageArg = Number(args[0]) || 1;
-  const totalPages = Math.ceil(commands.size / perPage);
-  const start = (pageArg - 1) * perPage;
-  const end = start + perPage;
+  // Komendy podstawowe (basics)
+  else if (String(args[0]).toLowerCase() === "basics") {
+    const entries = Object.entries(basicCommands);
+    const filteredEntries = await Promise.all(
+      entries.map(async (i) => {
+        const command = multiCommands.getOne(i[0]);
+        if (!command) return null;
+        const role = await extractCommandRole(command);
+        return i;
+      })
+    );
+    const validEntries = filteredEntries.filter(Boolean);
+    const basicStr = validEntries
+      .map(
+        (i) =>
+          `${multiCommands.getOne(i[0])?.meta?.icon ?? "📁"} ${prefix}${i[0]} ${
+            UNISpectra.arrowFromT
+          } ${i[1]}`
+      )
+      .join("\n");
 
-  const pageCommands = commands.toArray().slice(start, end);
+    let strs = [
+      `${UNISpectra.arrow} Jesteś nowy w grze? Oto ***PODSTAWY***`,
+      ``,
+      `⌨️ Aby używać komend, musisz podawać prefiksy. Przykład: wpisz "${prefix}gift" bez cudzysłowów aby użyć komendy gift.`,
+      ``,
+      `🔎 Możesz używać tylko komend, które **istnieją** w menu.`,
+      ``,
+      `‼️ Niektóre komendy wymagają **wyższej roli** aby je użyć.`,
+      ``,
+      `📝 Nie używaj czcionek w komendach. Bot nie akceptuje "${prefix}**gift**" ponieważ ma dodatkowe style.`,
+      ``,
+      `🎒 Co to jest klucz przedmiotu lub ekwipunku? Przykład:`,
+      `***PRZYKŁADOWE UI***: 🌒 **Shadow Coin** [shadowCoin]`,
+      `Klucz "shadowCoin" jest używany w komendach wymagających podania klucza. Np.: "${prefix}pet-feed Liane shadowCoin" - nakarmisz **Liane** za pomocą 🌒 **Shadow Coin**.`,
+      ``,
+      `✅ **Podstawowe Komendy**`,
+      basicStr,
+      ``,
+      `${UNISpectra.arrowFromT} Spróbuj ***Eksplorować*** więcej komend!`,
+      `${UNISpectra.arrowFromT} Wyświetl według strony: **${prefix}${commandName} <strona>**`,
+      `${UNISpectra.arrowFromT} Wyświetl wszystkie: **${prefix}${commandName} all**`,
+      `${UNISpectra.charm} Stworzone przez @**Liane Cagara** 🎀`,
+    ].join("\n");
 
-  let pageOutput = `📋 | **Menu komend** (Strona ${pageArg}/${totalPages})\n\n`;
-
-  for (const command of pageCommands) {
-    const { name, description, icon, shopPrice = 0 } = command.meta;
-    const shortDesc =
-      description?.length > 60
-        ? description.slice(0, 60) + "..."
-        : description || "Brak opisu.";
-    const priceText = shopPrice ? `💰 ${abbreviateNumber(shopPrice)} | ` : "";
-    pageOutput += `${icon || "🔹"} **${toTitleCase(
-      name
-    )}** — ${priceText}${shortDesc}\n`;
+    return output.replyStyled(strs, {
+      ...style,
+      content: {
+        text_font: "none",
+      },
+    });
   }
-
-  pageOutput += `\n📘 Aby zobaczyć szczegóły konkretnej komendy, wpisz:\n➡️ ${prefix}${cmdn} <nazwa>\n`;
-  pageOutput += `💫 MADE WITH ❤️ BY hugo`;
-
-  return output.reply(pageOutput);
 }
