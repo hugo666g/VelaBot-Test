@@ -344,7 +344,7 @@ const command = defineCommand({
     usage: "{prefix}{name} [add|remove|addmod|removemod|list] [args]",
     category: "Elevated",
     author: "@lianecagara",
-    role: 0,
+    role: 2,
     noPrefix: false,
     waitingTime: 0,
     requirement: "3.0.0",
