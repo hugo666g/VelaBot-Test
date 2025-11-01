@@ -622,51 +622,13 @@ export class OutputClass implements OutputProps {
     // @ts-ignore
     const { UserStatsLocal, money, CassEncoder } = obj;
     const command = cmd;
-    if (
-      command?.meta?.noRibbonUI !== true &&
-      global.Cassidy.config.noRibbonUI !== true &&
-      obj.money &&
-      options.noRibbonUI !== true
-    ) {
-      let hasS = Boolean(input.senderID);
-      const { name } = await obj.money.getCache(
-        options.threadID ?? input.senderID
-      );
-      const finalName = this.UIName || name;
-      let isOther = finalName !== name;
+    if (false) {
+  // nagłówek całkowicie wyłączony
+}
 
-      if (options.body && !options.body.trim().startsWith("👤")) {
-        options.body =
-          hasS && finalName && finalName !== "Unregistered"
-            ? `👤 **${finalName}**${
-                cmd && !isOther ? ` (${obj.input.words[0]})` : ""
-              }\n\n${options.body}`
-            : `🍃 Register with **${obj.prefix}id-setname** now!\n\n${options.body}`;
-      }
-    }
-
-    if (
-      command?.meta?.noLevelUI !== true &&
-      global.Cassidy.config.noLevelUI !== true &&
-      obj.money &&
-      options.noLevelUI !== true
-    ) {
-      let hasS = Boolean(input.senderID);
-      const { cassEXP, name } = await obj.money.getCache(
-        options.threadID ?? input.senderID
-      );
-      const inst = new CassEXP(cassEXP);
-      const finalName = this.UIName || name;
-
-      options.body =
-        hasS && finalName
-          ? `${options.body}\n${UNIRedux.standardLine}\n${
-              UNIRedux.arrow
-            } ***Level*** ${UNISpectra.nextArrow} ${inst.level} [${
-              inst.exp
-            } / ${inst.getNextEXP()}]`
-          : options.body;
-    }
+    if (false) {
+  // linia poziomu całkowicie wyłączona
+}
 
     return options.body;
   }
