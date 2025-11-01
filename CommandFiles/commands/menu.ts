@@ -30,7 +30,7 @@ export async function entry({ input, output, prefix, multiCommands }: CommandCon
     result += `${icon} ${prefix}${toTitleCase(name)}\n`;
   }
 
-  result += `\n✨ Developed by @**Liane Cagara** 🎀`;
+  result += `\n✨ Stworzony przez: **hugo** 🎀`;
 
   return output.replyStyled(result, {
     ...style,
