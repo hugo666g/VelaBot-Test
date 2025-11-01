@@ -7,6 +7,8 @@ module.exports = easyCMD({
   icon: "🤖",
   category: "AI",
   cooldown: 5,
+  noRibbonUI: true,
+  noLevelUI: true,
 
   async run(ctx) {
     return main(ctx);
