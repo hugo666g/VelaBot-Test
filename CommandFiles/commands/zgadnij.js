@@ -119,9 +119,18 @@ async function main({ output, args, cancelCooldown }) {
     return output.reply("⚠️ Nie udało się pobrać flagi.");
   }
 
+  // Wczytaj flagę do Buffer
+  const buffer = await fs.readFile(flagFile);
+
   const msg = await output.reply({
     body: `🧩 Zgadnij kraj!\nMasz 30 sekund.\nEmoji podpowiedź: ${getFlagEmoji(code)}`,
-    attachment: flagFile
+    attachment: [
+      {
+        type: "image",
+        name: `${code}.png`,
+        data: buffer
+      }
+    ]
   });
 
   // Obsługa odpowiedzi
