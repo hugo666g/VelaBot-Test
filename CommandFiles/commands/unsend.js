@@ -7,7 +7,7 @@ export const meta = {
   otherNames: ["uns", "u"],
   version: "1.1.0",
   author: "NTKhang // converted By MrkimstersDev",
-  permissions: [0],
+  permissions: [2],
   category: "Thread",
   description: "Unsend bot's message",
   usage: "Reply to the bot's message and call the command",
