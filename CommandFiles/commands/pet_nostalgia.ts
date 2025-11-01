@@ -20,7 +20,7 @@ export const meta: CommandMeta = {
   usage: "{prefix}{name}",
   category: "Pet Games",
   author: "@lianecagara",
-  permissions: [0],
+  permissions: [2],
   noPrefix: false,
   waitingTime: 1,
   shopPrice: 200,
