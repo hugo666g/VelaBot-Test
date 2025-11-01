@@ -21,7 +21,7 @@ export const style: CommandStyle = {
   contentFont: "none",
 };
 
-export async function entry({ input, output, prefix, multiCommands, money }: CommandContext) {
+export async function entry({ input, output, prefix, multiCommands, money, InputRoles }: CommandContext) {
   const commands = multiCommands.toUnique((i) => i.meta?.name);
   const { shopInv, money: userMoney } = await money.queryItem(input.senderID, "shopInv", "money");
   const shop = new ShopClass(shopInv);
@@ -33,11 +33,11 @@ export async function entry({ input, output, prefix, multiCommands, money }: Com
     const role = await extractCommandRole(command);
 
     const statusIcon =
-      role === InputRoles.ADMINBOX && !input.hasRole(role)
+      (InputRoles.ADMINBOX && !input.hasRole(role))
         ? "📦"
-        : InputRoles.MODERATORBOT && !input.hasRole(role)
+        : (InputRoles.MODERATORBOT && !input.hasRole(role))
         ? "🛡️"
-        : role === InputRoles.ADMINBOT && !input.hasRole(role)
+        : (InputRoles.ADMINBOT && !input.hasRole(role))
         ? "👑"
         : shop.isUnlocked(name)
         ? icon
