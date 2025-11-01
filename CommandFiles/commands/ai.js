@@ -9,6 +9,7 @@ module.exports = easyCMD({
   cooldown: 5,
   noRibbonUI: true,
   noLevelUI: true,
+  disableStyler: true,
 
   async run(ctx) {
     return main(ctx);
