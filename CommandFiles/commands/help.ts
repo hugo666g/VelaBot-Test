@@ -2,7 +2,7 @@
 import { toTitleCase } from "@cassidy/unispectra";
 
 export const meta: CommandMeta = {
-  name: "menu",
+  name: "help",
   author: "@lianecagara",
   description: "Wyświetla wszystkie komendy dostępne dla zwykłego użytkownika.",
   version: "3.1.2",
@@ -11,11 +11,11 @@ export const meta: CommandMeta = {
   role: 0,
   waitingTime: 0.1,
   icon: "🧰",
-  otherNames: ["help", "start"],
+  otherNames: ["menu", "start"],
 };
 
 export const style: CommandStyle = {
-  title: Cassidy.logo,
+  title: LISTA KOMEND,
   titleFont: "none",
   contentFont: "none",
 };
@@ -33,14 +33,14 @@ export async function entry({ input, output, prefix, multiCommands }: CommandCon
     return output.reply("❌ Brak dostępnych komend dla zwykłego użytkownika.");
   }
 
-  let result = `🔍 | **Dostępne komendy dla użytkownika** 🧰 (${userCommands.length})\n\n`;
+  let result = `🔍 | **Dostepne komendy dla uzytkownika** 🧰 (${userCommands.length})\n\n`;
 
   for (const command of userCommands) {
     const { name, icon = "📄" } = command.meta;
     result += `${icon} ${prefix}${toTitleCase(name)}\n`;
   }
 
-  result += `\n✨ Developed by @**Liane Cagara** 🎀`;
+  result += `\n✨ Developed by **hugo** 🎀`;
 
   return output.replyStyled(result, {
     ...style,
