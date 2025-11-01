@@ -14,7 +14,7 @@ export const meta = {
   version: "1.2.2",
   usage: "{prefix}intellnica <action> [arguments]",
   category: "Utilities",
-  permissions: [0],
+  permissions: [2],
   noPrefix: false,
   waitingTime: 1,
   otherNames: ["intell", "nicaint"],
