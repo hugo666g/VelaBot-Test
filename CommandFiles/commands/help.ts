@@ -15,7 +15,7 @@ export const meta: CommandMeta = {
 };
 
 export const style: CommandStyle = {
-  title: LISTA KOMEND,
+  title: "LISTA KOMEND",
   titleFont: "none",
   contentFont: "none",
 };
