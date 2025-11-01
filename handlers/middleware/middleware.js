@@ -674,7 +674,7 @@ api.${
     );
     runObjects.extra = runObjects.command?.meta?.extra ?? {};
     const stylerDummy = new CassidyResponseStylerControl({});
-    styler.activateAllPresets();
+   // styler.activateAllPresets();
     runObjects.styler = styler;
     runObjects.stylerDummy = stylerDummy;
 
