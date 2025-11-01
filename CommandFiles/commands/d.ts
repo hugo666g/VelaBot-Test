@@ -9,7 +9,7 @@ export const meta: CommandMeta = {
   requirement: "2.5.0",
   icon: "📥",
   category: "Media",
-  role: 1,
+  role: 2,
   noWeb: true,
 };
 
