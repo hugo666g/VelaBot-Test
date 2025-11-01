@@ -1,118 +1,125 @@
-const fs = require("fs");
-const path = require("path");
-const cmd = module.exports;
+import { SpectralCMDHome, CassCheckly, Config } from "@cassidy/spectral-home";
+import { defineEntry } from "@cass/define";
+import { FontSystem } from "cassidy-styler";
+import { UNIRedux } from "@cassidy/unispectra";
+import { CanvCass } from "@cassidy/canvcore";
+import fs from "fs-extra";
+import path from "path";
 
-cmd.config = {
+export const meta = {
   name: "help",
+  description: "📘 Lista komend w stylu VelaBota (graficzna)",
   version: "1.0.0",
-  author: "Yan Maglinte | Liane Cagara",
-  description: "show all commands.",
-  category: "utility",
-  admin: false,
-  usePrefix: false,
-  cooldowns: 5,
+  category: "System",
+  author: "@hugo",
+  icon: "💫",
+  cmdType: "cplx_g",
+  noRibbonUI: true,
 };
 
-cmd.run = async function ({ event, args }) {
-  // WTF?
-  // const { id: senderID } = event.sender || "";
+const configs = [
+  {
+    key: "home",
+    description: "Pokazuje graficzną listę komend.",
+    icon: "📘",
+    async handler({ input, output, prefix }) {
+      const cmdsDir = path.join(process.cwd(), "commands");
+      const files = fs.readdirSync(cmdsDir).filter(f => f.endsWith(".js"));
+      const commands = [];
 
-  // Destructure 'id' from event.sender, will default to "" (empty string)"
-  const { id: senderID = "" } = event.sender ?? {};
-  const commandsPath = path.join(__dirname, "../commands");
-
-  // Normalize the page number.
-  const page = Slicer.parseNum(args[0]);
-
-  // Message string (expecting +=)
-  let message = "Commands List: \n\n";
-
-  // Scan the folder of commands to consume resources instead of making a global cache, good job. File names btw.
-  const commandFiles = fs
-    .readdirSync(commandsPath)
-    .filter((file) => file.endsWith(".js"));
-
-  // Create a Slicer instance named 'slicer'
-  const slicer = new Slicer(commandFiles, 5);
-
-  // Get the page, then render it using forEach instead of map. LMAO
-  slicer.getPage(page).forEach((file) => {
-    try {
-      const command = require(path.join(commandsPath, file));
-
-      // Get the number from the original array of file names
-      const number = commandFiles.indexOf(file) + 1;
-
-      // Check if there is a configuration before doing anything at all
-      if (command?.config) {
-        message += `${number}.「 ${command.config.usePrefix ? PREFIX : ""}${
-          command.config.name
-        } 」\nDescription: ${
-          command.config.description ?? "No Description"
-        }\nAuthor: ${command.config.author ?? "No Author"}\n\n`;
+      for (const file of files) {
+        try {
+          const mod = await import(`../${file}`);
+          const data = mod.meta || mod.default?.meta || {};
+          if (data.name && data.description) {
+            commands.push({
+              name: data.name,
+              desc: data.description,
+              category: data.category || "Inne",
+            });
+          }
+        } catch {}
       }
-    } catch (error) {
-      // Ignore errors because if the developer does not even bother making a global cache for commands instead of require() every time, why would it bother handle the errors?
-      return;
-    }
-  });
-  // Add the page number and total commands.
-  message += `\nPage ${page}/${slicer.pagesLength}\n\nTotal Commands: ${commandFiles.length}`;
 
-  // Send the message with extra buttons because why the hell not.
-  api.graph({
-    recipient: { id: senderID },
-    message: {
-      text: message,
-      quick_replies: [
-        {
-          content_type: "text",
-          title: "shoti",
-          payload: "SHOTI",
+      // Sortowanie i stronicowanie
+      commands.sort((a, b) => a.name.localeCompare(b.name));
+      const perPage = 10;
+      const page = 1;
+      const cmdsPage = commands.slice(0, perPage);
+
+      // Tworzenie canvasa Cassieah-style
+      const canv = CanvCass.premade({ width: 1000, height: 1300 });
+      await canv.drawBackground("https://i.imgur.com/0sZsWZ9.png"); // kosmiczne tło
+
+      canv.drawBox({
+        rect: {
+          left: 50,
+          top: 100,
+          width: canv.width - 100,
+          height: canv.height - 200,
         },
-        {
-          content_type: "text",
-          title: "shotiv2",
-          payload: "SHOTIV2",
-        },
-      ],
+        fill: "rgba(0,0,0,0.4)",
+        radius: 30,
+      });
+
+      canv.drawText("📘 LISTA KOMEND", {
+        x: canv.centerX,
+        y: 160,
+        align: "center",
+        fill: "#00ccff",
+        fontType: "cbold",
+        size: 70,
+        shadowColor: "#00ccff",
+        shadowBlur: 20,
+      });
+
+      let y = 300;
+      for (const cmd of cmdsPage) {
+        canv.drawText(`/${cmd.name}`, {
+          x: 150,
+          y,
+          align: "left",
+          fill: "#00ccff",
+          fontType: "cbold",
+          size: 45,
+        });
+        canv.drawText(`- ${cmd.desc}`, {
+          x: 400,
+          y,
+          align: "left",
+          fill: "#ffffff",
+          fontType: "cbold",
+          size: 38,
+        });
+        y += 80;
+      }
+
+      canv.drawText("MADE WITH ❤️ BY hugo", {
+        x: canv.centerX,
+        y: canv.bottom - 60,
+        align: "center",
+        fill: "rgba(255,255,255,0.5)",
+        fontType: "cbold",
+        size: 28,
+      });
+
+      return output.reply({
+        body: `${UNIRedux.arrow} Lista komend VelaBot w systemie Cassieah\n`,
+        attachment: await canv.toStream(),
+      });
     },
-  });
-};
+  },
+];
 
-class Slicer {
-  constructor(array = [], limit = 10) {
-    this.array = Array.from(array);
-    this.limit = limit;
-  }
-  getPage(page) {
-    return Slicer.byPageArray(this.array, page, this.limit);
-  }
-  get pagesLength() {
-    return Math.floor(this.array.length / (this.limit || 10));
-  }
-  static parseNum(page) {
-    page = parseInt(page);
-    if (isNaN(page)) {
-      page = 1;
-    }
-    return page;
-  }
+const home = new SpectralCMDHome(
+  {
+    argIndex: 0,
+    defaultKey: "home",
+    errorHandler: (error, ctx) => {
+      ctx.output.error(error);
+    },
+  },
+  configs
+);
 
-  static byPage(page, limit) {
-    page = parseInt(page);
-    if (isNaN(page)) {
-      page = 1;
-    }
-    limit = parseInt(limit);
-    if (isNaN(limit)) {
-      limit = 10;
-    }
-    const sliceA = (page - 1) * limit;
-    const sliceB = page * limit;
-    return [sliceA, sliceB];
-  }
-  static byPageArray(array, page, limit) {
-    return array.slice(...this.byPage(page, limit));
-  }
-}
+export const entry = defineEntry(async (ctx) => home.runInContext(ctx));
