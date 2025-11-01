@@ -1,106 +1,76 @@
-import fs from "fs";
-import path from "path";
+const enabledThreads = new Set();
 
 export const meta = {
   name: "resend",
-  description: "♻️ Przywraca usunięte wiadomości (anti-unsend system).",
-  version: "3.0.0",
-  author: "Hugo + ChatGPT (VelaBot styl)",
-  icon: "♻️",
-  category: "System",
-  role: 2,
+  version: "1.2.0",
+  author: "Hugo + VelaBot Revamp",
+  description: "♻️ Automatycznie ponownie wysyła usunięte wiadomości (domyślnie włączone).",
+  supported: "^4.0.0"
 };
 
-export const style = {
-  title: "♻️ Anti-Unsend System",
-  titleFont: "bold",
-  contentFont: "fancy",
-};
+const messageStore = {};
 
-const cacheDir = path.join(process.cwd(), "cache", "resend");
-if (!fs.existsSync(cacheDir)) fs.mkdirSync(cacheDir, { recursive: true });
-
-const messageCache = new Map();
-
-// 🟢 Komenda główna (on/off)
-export async function entry({ output, input, threadsDB, args }) {
-  if (!input.isAdmin) return output.reply("❌ Nie masz uprawnień do tej komendy.");
-
-  const current = (await threadsDB.queryItem(input.threadID, "resend"))?.resend;
-  const choice =
-    args[0] === "on" ? true :
-    args[0] === "off" ? false :
-    current ? !current : true;
-
-  await threadsDB.setItem(input.threadID, { resend: choice });
-
-  return output.replyStyled(
-    `✅ Anti-Unsend został **${choice ? "włączony" : "wyłączony"}**.`,
-    style
-  );
-}
-
-// 📩 Nasłuch każdej wiadomości — zapis do cache
-export async function message({ input, threadsDB }) {
-  const thread = await threadsDB.getCache(input.threadID);
-  if (thread.resend === false) return;
-
-  if (!input.messageID || (!input.body && (!input.attachments?.length))) return;
-
-  messageCache.set(input.messageID, {
-    body: input.body || "",
-    attachments: input.attachments || [],
-    senderID: input.senderID,
-    threadID: input.threadID,
-  });
-
-  // Auto cleanup po 1h
-  setTimeout(() => messageCache.delete(input.messageID), 3600000);
-}
-
-// 🗑️ Event usunięcia wiadomości
-export async function event({ input, output, threadsDB }) {
+// aktywacja dla wszystkich wątków na starcie
+export async function onStart({ api }) {
   try {
-    if (input.type !== "message_unsend") return;
-    const thread = await threadsDB.getCache(input.threadID);
-    if (thread.resend === false) return;
-
-    const oldMsg = messageCache.get(input.messageID);
-    if (!oldMsg) return;
-
-    const { body, attachments, senderID } = oldMsg;
-    let text = `♻️ Użytkownik @${senderID} usunął wiadomość:`;
-    if (body) text += `\n\n🗨️ ${body}`;
-
-    const files = [];
-    for (const att of attachments) {
-      const ext =
-        att.type === "photo" ? "jpg" :
-        att.type === "video" ? "mp4" :
-        att.type === "audio" ? "mp3" :
-        att.type === "animated_image" ? "gif" : "bin";
-
-      const filePath = path.join(cacheDir, `${input.messageID}.${ext}`);
-      const url = att.url || att.previewUrl;
-      if (!url) continue;
-
-      const res = await fetch(url);
-      const buf = Buffer.from(await res.arrayBuffer());
-      fs.writeFileSync(filePath, buf);
-      files.push(fs.createReadStream(filePath));
+    const threads = await api.getThreadList(20, null, ["INBOX"]);
+    for (const thread of threads) {
+      enabledThreads.add(thread.threadID);
     }
-
-    await output.replyStyled(
-      {
-        body: text,
-        attachment: files,
-        mentions: [{ id: senderID, tag: `@${senderID}` }],
-      },
-      style
-    );
-
-    messageCache.delete(input.messageID);
+    console.log(`[RESEND] Automatycznie aktywowany dla ${enabledThreads.size} czatów.`);
   } catch (err) {
-    console.error("[RESEND ERROR]", err);
+    console.error("[RESEND] Błąd przy inicjalizacji:", err);
+  }
+}
+
+export async function entry({ event, api, args }) {
+  const threadID = event.threadID;
+
+  // komendy zarządzania resend
+  if (args && args[0]) {
+    const option = args[0].toLowerCase();
+
+    if (option === "on") {
+      enabledThreads.add(threadID);
+      return api.sendMessage("✅ Funkcja resend została *włączona* dla tego czatu.", threadID);
+    }
+    if (option === "off") {
+      enabledThreads.delete(threadID);
+      return api.sendMessage("⛔ Funkcja resend została *wyłączona* dla tego czatu.", threadID);
+    }
+  }
+
+  // zapis każdej wiadomości
+  if (event.body || (event.attachments && event.attachments.length > 0)) {
+    messageStore[event.messageID] = {
+      body: event.body,
+      attachments: event.attachments.map(a => a.url ? a : null).filter(Boolean),
+      senderName: event.senderName || "Nieznany użytkownik",
+      timestamp: Date.now()
+    };
+  }
+
+  // reagowanie na usunięcie wiadomości
+  if (event.type === "message_unsend" && enabledThreads.has(threadID)) {
+    const msg = messageStore[event.messageID];
+    if (!msg) return;
+
+    const text = msg.body || "📎 (wiadomość zawierała załącznik)";
+    const sender = msg.senderName;
+
+    try {
+      await api.sendMessage({
+        body: `♻️ *Wiadomość została usunięta!*\n👤 Od: ${sender}\n💬 Treść: ${text}`,
+        attachment: msg.attachments
+      }, threadID);
+    } catch (err) {
+      console.error("[RESEND ERROR]", err);
+    }
+  }
+
+  // czyszczenie starszych wiadomości (oszczędność pamięci)
+  const keys = Object.keys(messageStore);
+  if (keys.length > 300) {
+    for (const key of keys.slice(0, 100)) delete messageStore[key];
   }
 }
