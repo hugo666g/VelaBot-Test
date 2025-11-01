@@ -65,15 +65,6 @@ function getWeightedLevel() {
   return "hard";
 }
 
-// 🏁 Emoji flag
-function getFlagEmoji(code) {
-  return code
-    ? code
-        .toUpperCase()
-        .replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)))
-    : "🏳️";
-}
-
 // 🌍 Zbiory krajów
 const easyCountries = {
   "polska": "pl","niemcy": "de","francja": "fr","hiszpania": "es","wlochy": "it",
@@ -102,7 +93,7 @@ async function downloadFlag(code) {
   return tmpPath;
 }
 
-// 🌟 Funkcja główna
+// 🌟 Główna funkcja
 async function main({ output, args, cancelCooldown }) {
   let level = args[0]?.toLowerCase();
   if (level && !["easy","medium","hard"].includes(level)) {
@@ -120,31 +111,43 @@ async function main({ output, args, cancelCooldown }) {
     return output.reply("⚠️ Nie udało się pobrać flagi.");
   }
 
-  // Używamy STRUMIENIA, a nie bufora
   const stream = fs.createReadStream(flagFile);
-
   const msg = await output.reply({
-    body: `🧩 Zgadnij kraj!\nMasz 30 sekund.\nPodpowiedź emoji: ${getFlagEmoji(code)}`,
-    attachment: stream, // ✅ Poprawione – stream zamiast obiektu
+    body: `🧩 Zgadnij kraj po fladze!\nMasz 30 sekund na odpowiedź.`,
+    attachment: stream,
   });
 
-  // Obsługa odpowiedzi użytkownika
+  let answered = false;
+
   if (msg.atReply) {
     msg.atReply(async (rep) => {
+      if (answered) return;
       const userAns = normalizeAnswer(rep.input.text);
       if (userAns === correct) {
-        await output.reply(
-          `✅ Brawo! Poprawna odpowiedź: ${getFlagEmoji(code)} ${correct}`,
-          rep
-        );
+        answered = true;
+        clearTimeout(timeout);
+        await msg.edit({
+          body: `✅ Poprawna odpowiedź: ${name.toUpperCase()} 🇨🇴`.replace("🇨🇴", flagEmoji(code)),
+        });
       } else {
-        await output.reply(`❌ Niepoprawnie! Spróbuj ponownie.`, rep);
+        await output.reply(`❌ Niepoprawnie!`, rep);
       }
     });
   }
 
   // Timeout 30s
-  setTimeout(() => {
-    output.reply(`⏰ Czas minął!\n✅ Poprawna odpowiedź: ${getFlagEmoji(code)} ${correct}`);
+  const flagEmoji = (code) =>
+    code
+      ? code
+          .toUpperCase()
+          .replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
+      : "🏳️";
+
+  const timeout = setTimeout(async () => {
+    if (!answered) {
+      await msg.edit({
+        body: `⏰ Czas minął!\n✅ Poprawna odpowiedź: ${name.toUpperCase()} ${flagEmoji(code)}`,
+      });
+    }
   }, 30000);
 }
