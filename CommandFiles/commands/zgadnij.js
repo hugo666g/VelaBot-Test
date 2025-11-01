@@ -95,8 +95,9 @@ function randomCountry(level) {
 // 📸 Pobranie flagi do lokalnego pliku
 async function downloadFlag(code) {
   const url = `https://flagcdn.com/w320/${code}.png`;
-  const tmpPath = path.join(__dirname, "..", "tmp_flag.png");
+  const tmpPath = path.join(__dirname, "..", "cache", `${code}.png`);
   const response = await axios.get(url, { responseType: "arraybuffer" });
+  await fs.ensureDir(path.dirname(tmpPath));
   await fs.writeFile(tmpPath, response.data);
   return tmpPath;
 }
@@ -119,26 +120,23 @@ async function main({ output, args, cancelCooldown }) {
     return output.reply("⚠️ Nie udało się pobrać flagi.");
   }
 
-  // Wczytaj flagę do Buffer
-  const buffer = await fs.readFile(flagFile);
+  // Używamy STRUMIENIA, a nie bufora
+  const stream = fs.createReadStream(flagFile);
 
   const msg = await output.reply({
-    body: `🧩 Zgadnij kraj!\nMasz 30 sekund.\nEmoji podpowiedź: ${getFlagEmoji(code)}`,
-    attachment: [
-      {
-        type: "image",
-        name: `${code}.png`,
-        data: buffer
-      }
-    ]
+    body: `🧩 Zgadnij kraj!\nMasz 30 sekund.\nPodpowiedź emoji: ${getFlagEmoji(code)}`,
+    attachment: stream, // ✅ Poprawione – stream zamiast obiektu
   });
 
-  // Obsługa odpowiedzi
+  // Obsługa odpowiedzi użytkownika
   if (msg.atReply) {
     msg.atReply(async (rep) => {
       const userAns = normalizeAnswer(rep.input.text);
       if (userAns === correct) {
-        await output.reply(`✅ Brawo! Poprawna odpowiedź: ${getFlagEmoji(code)} ${correct}`, rep);
+        await output.reply(
+          `✅ Brawo! Poprawna odpowiedź: ${getFlagEmoji(code)} ${correct}`,
+          rep
+        );
       } else {
         await output.reply(`❌ Niepoprawnie! Spróbuj ponownie.`, rep);
       }
