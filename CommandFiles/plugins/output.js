@@ -211,73 +211,21 @@ export async function use(obj) {
     let uiName = null;
 
     /**
-     *
-     * @param {import("output-cassidy").StrictOutputForm} options     */
-    async function processOutput({ ...options }) {
-      // @ts-ignore
-      const { UserStatsLocal, money, CassEncoder } = obj;
-      const command = cmd;
-      if (
-        command?.meta?.noRibbonUI !== true &&
-        global.Cassidy.config.noRibbonUI !== true &&
-        obj.money &&
-        options.noRibbonUI !== true
-      ) {
-        let hasS = Boolean(input.senderID);
-        const { name } = await obj.money.getCache(
-          options.threadID ?? input.senderID
-        );
-        const finalName = uiName || name;
-        let isOther = finalName !== name;
+ * @param {import("output-cassidy").StrictOutputForm} options
+ */
+async function processOutput({ ...options }) {
+  // @ts-ignore
+  const { money } = obj;
 
-        if (options.body && !options.body.trim().startsWith("👤")) {
-          options.body =
-            hasS && finalName && finalName !== "Unregistered"
-              ? `👤 **${finalName}**${
-                  obj.command && !isOther ? ` (${obj.input.words[0]})` : ""
-                }\n\n${options.body}`
-              : `🍃 Register with **${obj.prefix}id-setname** now!\n\n${options.body}`;
-        }
-      }
+  // Tutaj ignorujemy ribbon i level UI, więc nic nie dodajemy do options.body
+  // Wszystko inne pozostaje bez zmian
 
-      if (
-        command?.meta?.noLevelUI !== true &&
-        global.Cassidy.config.noLevelUI !== true &&
-        obj.money &&
-        options.noLevelUI !== true
-      ) {
-        let hasS = Boolean(input.senderID);
-        const {
-          cassEXP,
-          name,
-          // @ts-ignore
+  // Jeżeli chcesz dodatkowo usuwać wszelkie strzałki/linie:
+  // UNIRedux.standardLine = "";
+  // UNIRedux.arrow = "";
 
-          money: userMoney,
-          // @ts-ignore
-
-          inventory = [],
-          // @ts-ignore
-
-          boxItems = [],
-        } = await obj.money.getCache(options.threadID ?? input.senderID);
-        const inst = new CassEXP(cassEXP);
-        const finalName = uiName || name;
-        // @ts-ignore
-
-        let isOther = finalName !== name;
-
-        options.body =
-          hasS && finalName
-            ? `${options.body}\n${UNIRedux.standardLine}\n${
-                UNIRedux.arrow
-              } ***Level*** ${UNISpectra.nextArrow} ${inst.level} [${
-                inst.exp
-              } / ${inst.getNextEXP()}]`
-            : options.body;
-      }
-
-      return options.body;
-    }
+  return options.body; // zwracamy dokładnie to, co było w body, bez dodawania dodatkowych linii
+}
 
     let STYLE = null;
 
