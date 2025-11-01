@@ -1,63 +1,58 @@
-import { getAllCommands } from "../core/commandLoader.js";
-import { extractCommandRole } from "../utilities/roles.js";
+import fs from "fs";
+import path from "path";
 
 export const meta = {
   name: "menu",
   author: "hugo + liane cagara",
-  version: "5.0",
+  version: "5.1",
   description: "Wyświetla listę wszystkich komend w stylu VelaBota 🌌",
   otherNames: ["help", "commands", "pomoc"],
-  role: extractCommandRole("user"),
   category: "utility",
+  role: "user",
 };
 
 export const style = {
   title: "🌌 𝗩𝗲𝗹𝗮𝗕𝗼𝘁 𝗚𝗮𝗹𝗮𝘅𝘆 𝗠𝗲𝗻𝘂",
-  titleFont: "fancy",
-  contentFont: "neon",
-  background: "dark-galaxy",
   footer: "MADE WITH ❤️ BY hugo",
 };
 
 export async function entry({ args, output }) {
-  const page = parseInt(args[0]) || 1;
-  const allCommands = getAllCommands();
+  try {
+    const commandsPath = path.join(process.cwd(), "src", "commands");
+    const files = fs.readdirSync(commandsPath).filter(f => f.endsWith(".js") || f.endsWith(".ts"));
 
-  // Sortuj alfabetycznie
-  const commandsSorted = allCommands.sort((a, b) =>
-    a.meta.name.localeCompare(b.meta.name)
-  );
+    // Sortowanie
+    const sorted = files.sort((a, b) => a.localeCompare(b));
+    const perPage = 10;
+    const totalPages = Math.ceil(sorted.length / perPage);
+    const page = Math.min(Math.max(parseInt(args[0]) || 1, 1), totalPages);
 
-  // Ilość na stronę
-  const perPage = 10;
-  const totalPages = Math.ceil(commandsSorted.length / perPage);
+    const slice = sorted.slice((page - 1) * perPage, page * perPage);
 
-  // Sprawdź zakres
-  if (page < 1 || page > totalPages) {
-    return output.replyStyled({
+    let content = "";
+
+    for (const file of slice) {
+      try {
+        const command = await import(path.join(commandsPath, file));
+        const name = command.meta?.name || file.replace(/\.(js|ts)$/i, "");
+        const desc = command.meta?.description || "Brak opisu";
+        const author = command.meta?.author || "Nieznany autor";
+
+        content += `✨ **${name}**\n📘 ${desc}\n👤 ${author}\n\n`;
+      } catch {
+        // Ignorujemy błędne komendy
+      }
+    }
+
+    content += `📄 Strona ${page}/${totalPages}\n🔢 Wszystkich komend: ${sorted.length}\n\n${style.footer}`;
+
+    await output.replyStyled({
       title: style.title,
-      content: `❌ Nie ma takiej strony (${page}). Wpisz numer od 1 do ${totalPages}.`,
-      ...style,
+      content,
+      background: "dark-galaxy",
+      font: "neon",
     });
+  } catch (err) {
+    await output.reply(`❌ Błąd przy wczytywaniu menu:\n${err.message}`);
   }
-
-  const start = (page - 1) * perPage;
-  const commandsPage = commandsSorted.slice(start, start + perPage);
-
-  // Format listy
-  const formattedList = commandsPage
-    .map(
-      (cmd, i) =>
-        `✨ **${cmd.meta.name}**\n📘 ${cmd.meta.description || "Brak opisu"}\n👤 ${cmd.meta.author || "Nieznany autor"}\n`
-    )
-    .join("\n");
-
-  // Wiadomość końcowa
-  const message = `${formattedList}\n\n📄 Strona ${page}/${totalPages}\n🔢 Wszystkich komend: ${allCommands.length}\n\n${style.footer}`;
-
-  await output.replyStyled({
-    title: style.title,
-    content: message,
-    ...style,
-  });
 }
