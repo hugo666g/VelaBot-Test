@@ -1,109 +1,81 @@
 const axios = require("axios");
-const fs = require("fs");
-const path = require("path");
 
 module.exports = easyCMD({
   name: "ai",
-  meta: {
-    otherNames: ["gpt4o", "ai", "ask"],
-    author: "From Haji Mix REST API, handled by Liane Cagara",
-    description:
-      "A versatile assistant that provides information, answers questions, and assists with a wide range of tasks.",
-    icon: "🤖",
-    version: "1.3.0",
-    noPrefix: "both",
-  },
+  description: "🤖 Rozmowa z AI (tekst + obrazki, z pamięcią UID w API)",
+  title: "🤖 AI Chat",
+  icon: "🤖",
   category: "AI",
-  title: "GPT-4O FREE 🖼️🎓",
-  run(ctx) {
+  cooldown: 5,
+
+  async run(ctx) {
     return main(ctx);
   },
 });
 
-async function main(ctx) {
-  const { output, args, input } = ctx;
+async function main({ output, args, input, cancelCooldown }) {
+  const API_URL = "https://geminiwebapi.onrender.com/gemini";
+  const UID = "cc96ac04-b19a-4960-8f7c-de428f500a6b";
+  const APIKEY = "gk_live_S12aMmy515cPOpoUy5hZQX1E0x3YYX1B";
+  const MAX_REPLY_LENGTH = 900;
 
-  await output.reaction("🟡");
+  let prompt = args.join(" ").trim();
+  const imageUrl =
+    input.attachments && input.attachments[0]?.type === "photo"
+      ? input.attachments[0].url
+      : "";
 
-  let ask = args.join(" ").trim();
-  if (!ask && (!input.attachmentUrls || input.attachmentUrls.length === 0)) {
+  if (!prompt && !imageUrl) {
+    cancelCooldown();
     await output.reaction("🔴");
     return output.reply(
-      `🔎 Please provide a question for **gpt**.\n\nExample: gpt what is tralalero?`
+      `❗ Podaj pytanie lub odpowiedz na zdjęcie.\n\nPrzykład: ai Jak działa AI?`
     );
   }
 
-  // Dodanie informacji o użytkowniku jeśli dostępne
-  let userInfo = "";
-  if (ctx.usersDB) {
-    const user = await ctx.usersDB.getUserInfo(input.sid);
-    const userGame = await ctx.usersDB.getCache(input.sid);
-    if (user?.name || userGame?.name) {
-      userInfo = `${user?.name || userGame?.name} Info:\nThey have ${Number(
-        userGame.money
-      ).toLocaleString()} balance.\n`;
-    }
-  }
+  const body = {
+    uid: UID,
+    ask: prompt || "[obrazek]",
+    ...(imageUrl ? { image_url: imageUrl } : {}),
+  };
 
-  let attachmentsText = "";
-  if (input.attachmentUrls && input.attachmentUrls.length > 0) {
-    attachmentsText = `\nUser also sent attachments: ${input.attachmentUrls.join(", ")}`;
-  }
+  await output.reaction("🟡"); // w trakcie
 
-  const bodyToSend = `${userInfo}Question:\n${ask || "[image]"}${attachmentsText}`;
-
+  let replyText;
   try {
-    const res = await axios.post(
-      "https://haji-mix.up.railway.app/api/gpt4o",
-      {
-        uid: input.sid + "_7",
-        ask: bodyToSend,
+    const res = await axios.post(API_URL, body, {
+      headers: {
+        Authorization: `Bearer ${APIKEY}`,
+        "Content-Type": "application/json",
       },
-      {
-        headers: {
-          "User-Agent":
-            "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/137.0.0.0 Safari/537.36",
-          Accept: "application/json",
-        },
-      }
-    );
+      timeout: 40000,
+    });
 
-    let replyText = res.data.answer || "⚠️ AI did not return any response.";
+    const data = res.data || {};
+    replyText =
+      data.response ||
+      data.result ||
+      data.content ||
+      data.output ||
+      data.message ||
+      "⚠️ Brak odpowiedzi AI.";
 
-    const form = { body: replyText };
-
-    // Obsługa obrazków
-    if (Array.isArray(res.data.images) && res.data.images.length > 0) {
-      const img = res.data.images[0];
-      if (img.url) {
-        const imgRes = await axios.get(img.url, { responseType: "arraybuffer" });
-        const filePath = path.join(
-          process.cwd(),
-          "temp",
-          `gpt-gen_${Date.now()}_${Math.floor(Math.random() * 1000000)}.png`
-        );
-        fs.writeFileSync(filePath, Buffer.from(imgRes.data));
-        form.attachment = fs.createReadStream(filePath);
-        // usuwanie pliku po wysłaniu
-        form.attachment.on("end", () => fs.unlinkSync(filePath));
-      }
-      if (img.description) {
-        form.body = img.description + "\n\n" + form.body;
-      }
-    }
-
-    await output.reaction("🟢");
-    const msg = await output.reply(form);
-
-    // Obsługa dalszej konwersacji
-    if (msg.atReply) {
-      msg.atReply((rep) => {
-        main({ ...ctx, args: rep.input.words });
-      });
-    }
+    replyText = replyText.trim().slice(0, MAX_REPLY_LENGTH);
   } catch (err) {
-    console.error("❌ Error fetching AI response:", err.message);
-    await output.reaction("🔴");
-    await output.reply("⚠️ Wystąpił błąd połączenia z AI.");
+    console.error("❌ Błąd Gemini API:", err.message);
+    replyText = "⚠️ Wystąpił błąd połączenia z AI.";
+  }
+
+  await output.reaction("🟢"); // gotowe
+
+  const info = await output.reply({
+    body: replyText + "\n\n***Możesz odpowiedzieć na tę rozmowę.***",
+  });
+
+  // Obsługa dalszej rozmowy z AI
+  if (info.atReply) {
+    info.atReply((rep) => {
+      main({ ...rep, args: rep.input.words, cancelCooldown });
+    });
   }
 }
