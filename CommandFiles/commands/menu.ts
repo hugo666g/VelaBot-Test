@@ -1,6 +1,5 @@
 // @ts-check
-import { extractCommandRole, toTitleCase } from "@cassidy/unispectra";
-import { ShopClass } from "@cass-plugins/shopV2";
+import { extractCommandRole, toTitleCase, UNISpectra } from "@cassidy/unispectra";
 
 export const meta: CommandMeta = {
   name: "menu",
@@ -21,37 +20,17 @@ export const style: CommandStyle = {
   contentFont: "none",
 };
 
-export async function entry({ input, output, prefix, multiCommands, money, InputRoles }: CommandContext) {
+export async function entry({ input, output, prefix, multiCommands }: CommandContext) {
   const commands = multiCommands.toUnique((i) => i.meta?.name);
-  const { shopInv, money: userMoney } = await money.queryItem(input.senderID, "shopInv", "money");
-  const shop = new ShopClass(shopInv);
 
   let result = `🔍 | **Dostępne komendy** 🧰 (${commands.size})\n\n`;
 
   for (const command of commands.values()) {
-    const { name, icon = "📄", shopPrice = 0 } = command.meta;
-    const role = await extractCommandRole(command);
-
-    const statusIcon =
-      (InputRoles.ADMINBOX && !input.hasRole(role))
-        ? "📦"
-        : (InputRoles.MODERATORBOT && !input.hasRole(role))
-        ? "🛡️"
-        : (InputRoles.ADMINBOT && !input.hasRole(role))
-        ? "👑"
-        : shop.isUnlocked(name)
-        ? icon
-        : shop.canPurchase(name, userMoney)
-        ? "🔐"
-        : "🔒";
-
-    const isAllowed = (!shopPrice || shop.isUnlocked(name)) && input.hasRole(role);
-    result += `${statusIcon} ${prefix}${isAllowed ? `**${toTitleCase(name)}**` : `${toTitleCase(name)}`}${
-      shopPrice ? ` - $${shopPrice}` : ""
-    }\n`;
+    const { name, icon = "📄" } = command.meta;
+    result += `${icon} ${prefix}${toTitleCase(name)}\n`;
   }
 
-  result += `\n${UNISpectra.charm} Developed by @**Liane Cagara** 🎀`;
+  result += `\n✨ Developed by @**Liane Cagara** 🎀`;
 
   return output.replyStyled(result, {
     ...style,
