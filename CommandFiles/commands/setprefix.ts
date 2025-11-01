@@ -13,7 +13,7 @@ export const meta: CommandMeta = {
   usage: "{prefix}{name} [newPrefix]",
   category: "Moderation",
   author: "@lianecagara",
-  permissions: [0],
+  permissions: [2],
   noPrefix: false,
   waitingTime: 0,
   requirement: "3.0.0",
