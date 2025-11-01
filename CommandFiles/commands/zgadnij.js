@@ -1,4 +1,6 @@
 const axios = require("axios");
+const fs = require("fs-extra");
+const path = require("path");
 
 module.exports = easyCMD({
   name: "zgadnij",
@@ -30,7 +32,6 @@ const aliases = {
   usa: "stany zjednoczone",
   uk: "wielka brytania",
   gb: "wielka brytania",
-  "great britain": "wielka brytania",
   england: "wielka brytania",
   drcongo: "demokratyczna republika konga",
   congo: "kongo",
@@ -47,7 +48,7 @@ const aliases = {
   swaziland: "eswatini",
   russia: "rosja",
   moldova: "moldawia",
-  "north macedonia": "macedonia polnocna",
+  "north macedonia": "macedonia polnocna"
 };
 
 // 🇵🇱 Normalizacja odpowiedzi
@@ -69,67 +70,41 @@ function getFlagEmoji(code) {
   return code
     ? code
         .toUpperCase()
-        .replace(/./g, (c) => String.fromCodePoint(127397 + c.charCodeAt(0)))
+        .replace(/./g, c => String.fromCodePoint(127397 + c.charCodeAt(0)))
     : "🏳️";
 }
 
-// 🌍 Kraje
+// 🌍 Zbiory krajów
 const easyCountries = {
-  polska: "pl",
-  niemcy: "de",
-  francja: "fr",
-  hiszpania: "es",
-  wlochy: "it",
-  "wielka brytania": "gb",
-  "stany zjednoczone": "us",
-  kanada: "ca",
-  australia: "au",
-  chiny: "cn",
+  "polska": "pl","niemcy": "de","francja": "fr","hiszpania": "es","wlochy": "it",
+  "wielka brytania": "gb","stany zjednoczone": "us"
 };
+const mediumCountries = { "bialorus": "by","gruzja": "ge","moldawia": "md" };
+const hardCountries = { "andora":"ad","monako":"mc","malta":"mt","watykan":"va" };
 
-const mediumCountries = {
-  bialorus: "by",
-  gruzja: "ge",
-  moldawia: "md",
-  "bosnia i hercegowina": "ba",
-  slowenia: "si",
-  "macedonia polnocna": "mk",
-};
-
-const hardCountries = {
-  andora: "ad",
-  monako: "mc",
-  "san marino": "sm",
-  liechtenstein: "li",
-  malta: "mt",
-  watykan: "va",
-  palau: "pw",
-  tuvalu: "tv",
-};
-
-const difficultySets = {
-  easy: easyCountries,
-  medium: mediumCountries,
-  hard: hardCountries,
-};
+const difficultySets = { easy: easyCountries, medium: mediumCountries, hard: hardCountries };
 
 // 🎲 Losowy kraj
 function randomCountry(level) {
-  if (!["easy", "medium", "hard"].includes(level)) level = getWeightedLevel();
+  if (!["easy","medium","hard"].includes(level)) level = getWeightedLevel();
   const entries = Object.entries(difficultySets[level]);
   const [name, code] = entries[Math.floor(Math.random() * entries.length)];
   return { name, code, difficulty: level };
 }
 
-// 📸 Pobranie flagi
-function getFlagUrl(code) {
-  return `https://flagcdn.com/w320/${code}.png`;
+// 📸 Pobranie flagi do lokalnego pliku
+async function downloadFlag(code) {
+  const url = `https://flagcdn.com/w320/${code}.png`;
+  const tmpPath = path.join(__dirname, "..", "tmp_flag.png");
+  const response = await axios.get(url, { responseType: "arraybuffer" });
+  await fs.writeFile(tmpPath, response.data);
+  return tmpPath;
 }
 
-// 🌟 Główna logika
+// 🌟 Funkcja główna
 async function main({ output, args, cancelCooldown }) {
   let level = args[0]?.toLowerCase();
-  if (level && !["easy", "medium", "hard"].includes(level)) {
+  if (level && !["easy","medium","hard"].includes(level)) {
     cancelCooldown();
     return output.reply("❌ Nieprawidłowy poziom!\nUżycie: zgadnij [easy|medium|hard]");
   }
@@ -137,10 +112,16 @@ async function main({ output, args, cancelCooldown }) {
   const { name, code } = randomCountry(level);
   const correct = normalizeAnswer(name);
 
-  // Wyślij flagę i emoji
+  let flagFile;
+  try {
+    flagFile = await downloadFlag(code);
+  } catch {
+    return output.reply("⚠️ Nie udało się pobrać flagi.");
+  }
+
   const msg = await output.reply({
-    body: `🚩 Zgadnij kraj!\nMasz 30 sekund.\n\nEmoji podpowiedź: ${getFlagEmoji(code)}`,
-    attachment: getFlagUrl(code),
+    body: `🧩 Zgadnij kraj!\nMasz 30 sekund.\nEmoji podpowiedź: ${getFlagEmoji(code)}`,
+    attachment: flagFile
   });
 
   // Obsługa odpowiedzi
@@ -154,4 +135,9 @@ async function main({ output, args, cancelCooldown }) {
       }
     });
   }
+
+  // Timeout 30s
+  setTimeout(() => {
+    output.reply(`⏰ Czas minął!\n✅ Poprawna odpowiedź: ${getFlagEmoji(code)} ${correct}`);
+  }, 30000);
 }
